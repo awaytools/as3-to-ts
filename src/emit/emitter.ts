@@ -3,7 +3,7 @@ import * as Keywords from '../syntax/keywords';
 import Node, {createNode} from '../syntax/node';
 import assign = require('object-assign');
 import { CustomVisitor } from "../custom-visitors"
-import {VERBOSE_MASK, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
+import {VERBOSE_MASK, INTERFACE_TOOL, INTERFACE_INF, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
 
 const util = require('util');
 
@@ -109,7 +109,8 @@ const VISITORS: {[kind: number]: NodeVisitor} = {
     [NodeKind.DOT]: emitDot,
     [NodeKind.LITERAL]: emitLiteral,
     [NodeKind.ARRAY]: emitArray,
-    [NodeKind.BLOCK]: emitBlock
+    [NodeKind.BLOCK]: emitBlock,
+    //[NodeKind.PARAMETER_LIST]: emitParametersList
 };
 
 
@@ -169,6 +170,7 @@ function filterAST(node: Node): Node {
 export default class Emitter {
     public isNew: boolean = false;
     public isExtended: boolean = false;
+    public skipNewLines: boolean = false;
 
     private _emitThisForNextIdent: boolean = true;
     get emitThisForNextIdent():boolean {
@@ -211,6 +213,7 @@ export default class Emitter {
             visitNode(this, filterAST(ast));
             this.catchup(this.source.length - 1);
         });
+        this.output = this.output.replace(/\s([^\n])\s*?=>/gm, " =>");//TODO hotfix. To remove new lines between arrow operator nad {
         return this.headOutput + this.output;
     }
 
@@ -673,25 +676,57 @@ function emitFunction(emitter: Emitter, node: Node): void {
     //emitter.insert("</declareation>");
     emitter.withScope(getFunctionDeclarations(emitter, node), () => {
         let rest = node.getChildFrom(NodeKind.MOD_LIST);
+        let blockNode = node.findChild(NodeKind.BLOCK);
+        emitter.skipNewLines = true;
         for (var i = 0; i < rest.length; i++) {
             var childNode:Node = rest[i];
-            if (childNode.kind == NodeKind.BLOCK)
-            {
-                emitter.insert(" => ");
-            }
-            //emitter.insert("<" +  NodeKind[n.kind]+ ":>");
+
             if (childNode.kind == NodeKind.PARAMETER_LIST)
             {
-                emitter.skip(Keywords.FUNCTION.length + 1);
-            }
-            visitNode(emitter, rest[i]);
+                //emitter.skip(Keywords.FUNCTION.length + 1)
+                let params = childNode.children;
+                emitter.consume(Keywords.FUNCTION, childNode.end);
 
-            //emitter.insert("</" +  NodeKind[n.kind]+ ">");
+
+            }
+            //emitter.insert("<" +  NodeKind[childNode.kind]+ + childNode.start + ":>");
+
+
+            if (childNode.kind == NodeKind.TYPE) {
+
+               let blockChildren = childNode.children;
+
+
+                //emitter.skipTo(childNode.start);
+            }
+            for (var j = childNode.start; j < childNode.end; j++) {
+                let char:string = emitter.source.substr(j, 1);
+                //emitter.insert("\n" + NodeKind[childNode.kind] + ")" + j + ")" + char.charCodeAt(0) + ":" + char);
+
+            }
+
+            visitNode(emitter, childNode);
+
+
+            if (childNode.kind == NodeKind.TYPE)
+            {
+                //emitter.insert("***[" + emitter.source.substr(childNode.start, childNode.end - childNode.start) + "]***");
+                //emitter.skipTo(blockNode.start);
+                emitter.insert(" => ");
+            }
+
+
+            //emitter.insert("</" +  NodeKind[childNode.kind]+ childNode.end + ">");
         }
         //visitNodes(emitter, rest);
+        emitter.skipNewLines = true;
 
     });
    // emitter.insert("</" + NodeKind[node.kind] + ">");
+}
+
+function emitParametersList(emitter: Emitter, node: Node): void {
+
 }
 
 function emitForIn(emitter: Emitter, node: Node): void {
@@ -847,8 +882,9 @@ function getClassDeclarations(emitter: Emitter, className: string, contentsNode:
 
 
 function emitClass(emitter: Emitter, node: Node): void {
-    emitDeclaration(emitter, node);
 
+    emitDeclaration(emitter, node);
+    //let interfaces:string[] = [];
     let name = node.findChild(NodeKind.NAME);
 
     let content = node.findChild(NodeKind.CONTENT);
@@ -856,6 +892,7 @@ function emitClass(emitter: Emitter, node: Node): void {
     if (!contentsNode) {
         return;
     }
+
 
     // ensure extends identifier is being imported
     let extendsNode = node.findChild(NodeKind.EXTENDS);
@@ -876,10 +913,14 @@ function emitClass(emitter: Emitter, node: Node): void {
 
     emitter.withScope(getClassDeclarations(emitter, name.text, contentsNode), scope => {
         scope.className = name.text;
-
+        let isInterfaceLinkPrinted:boolean = false;
         contentsNode.forEach(node => {
             visitNode(emitter, node.findChild(NodeKind.META_LIST));
             emitter.catchup(node.start);
+            if (isInterfaceLinkPrinted == false){
+                emitter.insert(`static ${INTERFACE_INF};\n`);
+                isInterfaceLinkPrinted = true;
+            }
             // console.log(node)
             switch (node.kind) {
                 case NodeKind.SET:
@@ -902,6 +943,15 @@ function emitClass(emitter: Emitter, node: Node): void {
     });
 
     emitter.catchup(node.end);
+    if (implementsNode) {
+        let classesList = ""
+        implementsNode.children.forEach((node) => {
+
+            classesList +=`"${node.text}", `;
+        });
+        classesList = classesList.substring(0, classesList.length - 2);
+        emitter.insert(`\n${name.text}.${INTERFACE_INF} = [${classesList}];`);
+    }
 }
 
 function emitSet(emitter: Emitter, node: Node): void {
@@ -1289,7 +1339,6 @@ function isCast(emitter: Emitter, node: Node):boolean {
     if(node.children.length == 0) {
         return false;
     }
-
     const isVector = node.children[0].kind === NodeKind.VECTOR;
     if( isVector && !emitter.isNew ) {
         return true;
@@ -1389,6 +1438,16 @@ function emitRelation(emitter: Emitter, node: Node): void {
             if (WARNINGS >= 1) {
                 console.log("emitter.ts: *** WARNING *** custom type interface checks are currently not treated by the compiler.");
             }
+            let children = node.children;
+            let leftIdent = children[0];
+            let middleNode = children[1];
+            let rightIdent = children[2];
+            //visitNode(emitter, leftIdent);
+            //visitNode(emitter, middleNode);
+            emitter.insert(`${INTERFACE_TOOL}(${leftIdent.text}, "${rightIdent.text}")`);
+            emitter.skipTo(node.end);
+            emitter.ensureImportIdentifier("AS3Utils");
+            return
         }
     }
 
@@ -1402,7 +1461,7 @@ function containsIsKeyword(node:Node) {
             return true;
         }
     }
-    return false;
+    return false;;
 }
 
 function containsPrimitiveIdentifier(node:Node) {

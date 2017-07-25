@@ -100,6 +100,7 @@ as3Files.forEach(file => {
   let ast = parse(path.basename(file), content);
   let contents = emit(ast, content, emitterOptions);
   contents = contents.replace(/\r\n?/g, '\n');
+  contents = contents.replace(/\s([^\n])\s*?=>/gm, " =>");
 
   // Apply custom visitors postprocessing.
   emitterOptions.customVisitors.forEach(visitor => {
