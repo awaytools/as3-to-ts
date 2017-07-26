@@ -3,7 +3,7 @@ import * as Keywords from '../syntax/keywords';
 import Node, {createNode} from '../syntax/node';
 import assign = require('object-assign');
 import { CustomVisitor } from "../custom-visitors"
-import {VERBOSE_MASK, INTERFACE_TOOL, INTERFACE_INF, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
+import {VERBOSE_MASK, INTERFACE_UTIL, INTERFACE_METHOD, INTERFACE_INF, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
 
 const util = require('util');
 
@@ -370,7 +370,12 @@ export default class Emitter {
             !isGloballyAvailable &&
             !this.findDefInScope(identifier)
         ) {
-            this.headOutput += `import { ${ identifier } } from "${ from }";\n`;
+            if (identifier == INTERFACE_UTIL) {
+                this.headOutput += `import { ${ identifier } } from "as3-to-ts/src/${INTERFACE_UTIL}";\n`;
+            } else
+            {
+                this.headOutput += `import { ${ identifier } } from "${ from }";\n`;
+            }
             this.declareInScope({ name: identifier });
         }
 
@@ -1494,9 +1499,9 @@ function emitRelation(emitter: Emitter, node: Node): void {
             let rightIdent = children[2];
             //visitNode(emitter, leftIdent);
             //visitNode(emitter, middleNode);
-            emitter.insert(`${INTERFACE_TOOL}(${leftIdent.text}, "${rightIdent.text}")`);
+            emitter.insert(`${INTERFACE_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
             emitter.skipTo(node.end);
-            emitter.ensureImportIdentifier("AS3Utils");
+            emitter.ensureImportIdentifier(INTERFACE_UTIL);
             return
         }
     }
