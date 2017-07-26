@@ -2,11 +2,13 @@ import { MyClass } from "./MyClass";
 
 export class SuperHoistingTest extends MyClass
 {
-	constructor(){
+	static __interfaces__;
+constructor(){
+		super();
 
 	}
 
-	/*override*/ protected myFunc(value:number):number
+	/*override*/ protected myFunc = (value:number):number => 
 	{
 		return super.myFunc(value) * 3;
 	}
@@ -17,7 +19,8 @@ export class SuperHoistingTest extends MyClass
 
 
 class MyClass{
-	protected myVar:number = 7;
+	static __interfaces__;
+protected myVar:number = 7;
 	protected myVar2:number;
 
 	public get myProp()        :number {return this._myProp }
@@ -29,7 +32,7 @@ class MyClass{
 	{
 		this.myVar2 = 13;
 	}
-	protected myFunc(value:number):number
+	protected myFunc = (value:number):number => 
 	{
 		return value * 10;
 	}

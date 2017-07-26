@@ -1,7 +1,8 @@
 
 export class InterfaceTest
 {
-	constructor(){
+	static __interfaces__;
+constructor(){
 		var myClass:MyClass = new MyClass();
 		console.log(myClass.myFunc(1));
 	}
@@ -13,8 +14,10 @@ interface myInterface{
 }
 
 class MyClass implements myInterface{
-	public myFunc(value:number):number
+	static __interfaces__;
+public myFunc = (value:number):number => 
 	{
 		return 10
 	}
 }
+MyClass.__interfaces__ = ["myInterface"];

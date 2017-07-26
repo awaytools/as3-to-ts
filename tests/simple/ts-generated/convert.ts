@@ -68,7 +68,8 @@ import { Vector3D } from "@as3web/flash"
 export class Basic_View extends Sprite
 {
     //plane texture
-    /*[Embed(source="/../embeds/floor_diffuse.jpg")]*/
+    /*[Embed(source="/../embeds/floor_diffuse.jpg")]*/static __interfaces__;
+
     public static FloorDiffuse:any;
 
     //engine variables
@@ -81,6 +82,7 @@ export class Basic_View extends Sprite
      * Constructor
      */
     constructor(){
+		super();
         this.stage.scaleMode = StageScaleMode.NO_SCALE;
         this.stage.align = StageAlign.TOP_LEFT;
 
@@ -106,7 +108,7 @@ export class Basic_View extends Sprite
     /**
      * render loop
      */
-    private _onEnterFrame(e:Event):void
+    private _onEnterFrame = (e:Event):void => 
     {
         this._plane.rotationY += 1;
 
@@ -116,7 +118,7 @@ export class Basic_View extends Sprite
     /**
      * stage listener for resize events
      */
-    private onResize(event:Event = null):void
+    private onResize = (event:Event = null):void => 
     {
         this._view.width = this.stage.stageWidth;
         this._view.height = this.stage.stageHeight;

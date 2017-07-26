@@ -1,7 +1,8 @@
 
 export class DebugClass
 {
-    public key;
+    static __interfaces__;
+public key;
 	constructor(){
 
 	}
