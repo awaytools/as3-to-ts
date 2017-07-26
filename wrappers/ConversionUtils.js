@@ -78,7 +78,7 @@ function readNormalizedSync(path) {
 
 // Collects all sources from passed directory into tmp directory,
 // and resolves includes.
-function collectSources(sourceDirectories, tmpDirectory) {
+function collectSources(sourceDirectories, tmpDirectory, focusedSourceFiles) {
   for (let i = 0; i < sourceDirectories.length; i++) {
     let src = sourceDirectories[i];
 
@@ -89,8 +89,17 @@ function collectSources(sourceDirectories, tmpDirectory) {
 
     files.forEach(file => {
 
-      // Ignore excluded files:
       let inputFile = path.resolve(src, file);
+
+      // Identify source file.
+      let segments = inputFile.match(/([a-zA-Z0-9]+)/g);
+      segments.pop();
+      let identifier = segments.pop();
+
+      // Focus or ignore?
+      if(focusedSourceFiles && focusedSourceFiles.indexOf(identifier) === -1) {
+        return;
+      }
 
       // resolve the includes and write prepared output to tmp directory:
       let content = fs.readFileSync(inputFile, 'UTF-8');
