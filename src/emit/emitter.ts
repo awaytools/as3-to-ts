@@ -906,7 +906,7 @@ function emitClass(emitter: Emitter, node: Node): void {
             visitNode(emitter, node.findChild(NodeKind.META_LIST));
             emitter.catchup(node.start);
             if (isInterfaceLinkPrinted == false){
-                emitter.insert(`static ${INTERFACE_INF};\n`);
+                if (implementsNode) emitter.insert(`static ${INTERFACE_INF};\n`);
                 isInterfaceLinkPrinted = true;
             }
             // console.log(node)
