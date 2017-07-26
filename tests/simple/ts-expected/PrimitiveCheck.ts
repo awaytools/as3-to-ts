@@ -1,4 +1,4 @@
-import { AS3Utils } from "./AS3Utils";
+import { AS3Utils } from "as3-to-ts/src/AS3Utils";
 export class PrimitiveCheck {
 
   constructor(){
