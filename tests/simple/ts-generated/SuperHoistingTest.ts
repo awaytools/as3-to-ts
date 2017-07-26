@@ -2,8 +2,7 @@ import { MyClass } from "./MyClass";
 
 export class SuperHoistingTest extends MyClass
 {
-	static __interfaces__;
-constructor(){
+	constructor(){
 		super();
 
 	}
@@ -19,8 +18,7 @@ constructor(){
 
 
 class MyClass{
-	static __interfaces__;
-protected myVar:number = 7;
+	protected myVar:number = 7;
 	protected myVar2:number;
 
 	public get myProp()        :number {return this._myProp }

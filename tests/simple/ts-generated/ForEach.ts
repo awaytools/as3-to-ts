@@ -4,8 +4,7 @@
 
 
 export class ForEach {
-    static __interfaces__;
-constructor(){
+    constructor(){
 
         // String array.
         var strings:string[] = [];

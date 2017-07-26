@@ -1,7 +1,6 @@
 export class Accessors {
 
-    static __interfaces__;
-public memberVar:string = "hello";
+    public memberVar:string = "hello";
 
     constructor(){
         this.memberMethod();

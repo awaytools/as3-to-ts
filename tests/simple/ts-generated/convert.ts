@@ -68,8 +68,7 @@ import { Vector3D } from "@as3web/flash"
 export class Basic_View extends Sprite
 {
     //plane texture
-    /*[Embed(source="/../embeds/floor_diffuse.jpg")]*/static __interfaces__;
-
+    /*[Embed(source="/../embeds/floor_diffuse.jpg")]*/
     public static FloorDiffuse:any;
 
     //engine variables

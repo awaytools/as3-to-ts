@@ -1,6 +1,5 @@
 export class Being {
-    static __interfaces__;
-public name:string;
+    public name:string;
     private _happiness:string;
     public set happiness(value:string) {
         this.doSetHappiness(value);
@@ -18,8 +17,7 @@ public name:string;
 }
 
 export class Animal extends Being {
-    static __interfaces__;
-constructor(){
+    constructor(){
 		super();
         super();
         this.name = "animal";
@@ -35,8 +33,7 @@ constructor(){
 }
 
 export class Snake extends Animal {
-    static __interfaces__;
-constructor(){
+    constructor(){
 		super();
         super();
         this.name = "snake";

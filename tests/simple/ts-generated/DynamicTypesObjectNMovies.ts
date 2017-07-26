@@ -6,8 +6,7 @@ import { MovieClip } from "@as3web/flash"
 
 export class DynamicTypesObjectNMovies
 {
-	static __interfaces__;
-constructor(){
+	constructor(){
 		var myObject:any = {}
 		myObject.a = 10;
 		console.log(myObject.a);

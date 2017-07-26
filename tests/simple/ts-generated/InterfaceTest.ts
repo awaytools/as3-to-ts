@@ -1,8 +1,7 @@
 
 export class InterfaceTest
 {
-	static __interfaces__;
-constructor(){
+	constructor(){
 		var myClass:MyClass = new MyClass();
 		console.log(myClass.myFunc(1));
 	}

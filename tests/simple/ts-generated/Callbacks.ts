@@ -1,7 +1,6 @@
 export class Callbacks {
 
-    static __interfaces__;
-public a:string = "a"
+    public a:string = "a"
 
     constructor(){
 
