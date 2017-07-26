@@ -1,0 +1,6 @@
+import flash.display.Sprite;
+
+public function doYourThing(spr:Sprite):void {
+    trace("snippets are cool");
+}
+
