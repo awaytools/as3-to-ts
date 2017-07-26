@@ -2,7 +2,7 @@
  * Created by Ushan on 30.06.2017.
  */
 
-import { MovieClip } from "../flash/display/MovieClip";
+import { MovieClip } from "@as3web/flash"
 
 export class DynamicTypesObjectNMovies
 {

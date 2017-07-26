@@ -1,7 +1,8 @@
 import { XML, XMLList } from "@as3web/flash";
 export class XML {
 
-  constructor(){
+  static __interfaces__;
+constructor(){
 
     var sport:XML =
       "<sport>\n        <name isCool='yes'>Basketball</name>\n        <players>men</players>\n        <players>women</players>\n        <nationalTV>NBC</nationalTV>\n        <nationalTV>ESPN</nationalTV>\n      </sport>";

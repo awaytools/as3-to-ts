@@ -2,10 +2,11 @@
  * Created by palebluedot on 5/3/17.
  */
 export class Unreachable {
-    constructor(){
+    static __interfaces__;
+constructor(){
         this.demonstrate();
     }
-    public demonstrate():number {
+    public demonstrate = ():number =>  {
 
         var tPow:number = 1;
         var tExp:number = 1;

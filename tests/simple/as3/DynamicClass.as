@@ -1,17 +1,16 @@
-
 package
 {
-public class DynamicClass
-{
-	public function DynamicClass()
+	public class DynamicClass
 	{
-		var myClass:SubDynamicClass = new SubDynamicClass();
-		myClass.a = 10;
-		trace(myClass);
+		public function DynamicClass()
+		{
+			var myClass:SubDynamicClass = new SubDynamicClass();
+			myClass.a = 10;
+			trace(myClass);
+		}
 	}
-}
-}
 
-dynamic class SubDynamicClass{
+	dynamic class SubDynamicClass{
 
+	}
 }

@@ -2,7 +2,6 @@ import { LogTests } from "./LogTests";
 import { MySubClass } from "./MySubClass";
 import { ScopeTest } from "./ScopeTest";
 
-import { setTimeout } from "../flash/utils/setTimeout";
 
 export class ScopeTest
 {
@@ -117,7 +116,7 @@ export class ScopeTest
 }
 
 
-import { setTimeout } from "../flash/utils/setTimeout";
+import { setTimeout } from "@as3web/flash"
 
 class MySubClass{
 	constructor(main:ScopeTest)

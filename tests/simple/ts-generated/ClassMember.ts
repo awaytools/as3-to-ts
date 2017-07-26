@@ -1,7 +1,8 @@
 
 export class ClassMember
 {
-	public myVar:number = 100;
+	static __interfaces__;
+public myVar:number = 100;
 	constructor(){
 		var myVar:number = 10;
 		console.log(myVar);

@@ -2,7 +2,6 @@
  * Created by palebluedot on 4/24/17.
  */
 package {
-import flash.utils.Dictionary;
 
 public class ForEach {
     public function ForEach() {

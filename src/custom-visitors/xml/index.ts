@@ -53,7 +53,7 @@ function visit (emitter: Emitter, node: Node): boolean {
     if (node.text && node.text.indexOf("@") === 0 &&
         node.parent.kind !== NodeKind.ARRAY_ACCESSOR) {
 
-        console.log('node: ', node.toString());
+        // console.log('node: ', node.toString());
 
         if(isNodeLeft(node)) {
 

@@ -2,7 +2,8 @@ import { SubClass } from "./SubClass";
 
 export class LoopImport
 {
-	constructor(){
+	static __interfaces__;
+constructor(){
 		var array:any[] = [1,2,3,4];
 		for (var i:number = 0; i < array.length; i++)
 		{
@@ -13,7 +14,8 @@ export class LoopImport
 }
 
 class SubClass{
-	constructor()
+	static __interfaces__;
+constructor()
 	{
 
 	}

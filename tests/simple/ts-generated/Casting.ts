@@ -1,6 +1,7 @@
 export class Casting {
 
-    constructor(){
+    static __interfaces__;
+constructor(){
 
         var v0:string = "HEY";
         this.thisMethodIsInTheClassScope(v0.toLowerCase());
@@ -34,7 +35,7 @@ export class Casting {
 
     }
 
-    private thisMethodIsInTheClassScope(str:string) {
+    private thisMethodIsInTheClassScope = (str:string) => {
         console.log(str);
     }
 }

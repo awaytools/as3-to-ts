@@ -3,7 +3,7 @@ import { TestVO } from "./TestVO";
  * Created by Ushan on 15.06.2017.
  */
 
-import { Dictionary } from "../flash/utils/Dictionary";
+
 
 
 export class LoopTests

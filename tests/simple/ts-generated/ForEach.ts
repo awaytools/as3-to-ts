@@ -1,10 +1,9 @@
 /**
  * Created by palebluedot on 4/24/17.
  */
-
-
 export class ForEach {
-    constructor(){
+    static __interfaces__;
+constructor(){
 
         // String array.
         var strings:string[] = [];
