@@ -2,8 +2,7 @@
  * Created by palebluedot on 5/3/17.
  */
 export class Unreachable {
-    static __interfaces__;
-constructor(){
+    constructor(){
         this.demonstrate();
     }
     public demonstrate = ():number =>  {

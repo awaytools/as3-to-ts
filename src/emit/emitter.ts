@@ -670,10 +670,7 @@ function getFunctionDeclarations(emitter: Emitter, node: Node): Declaration[] {
 
 
 function emitFunction(emitter: Emitter, node: Node): void {
-    //emitter.insert("<" + NodeKind[node.kind] + ":>");
-    //emitter.insert("<declareation:>");
     emitDeclaration(emitter, node);
-    //emitter.insert("</declareation>");
     emitter.withScope(getFunctionDeclarations(emitter, node), () => {
         let rest = node.getChildFrom(NodeKind.MOD_LIST);
         let blockNode = node.findChild(NodeKind.BLOCK);
@@ -683,21 +680,17 @@ function emitFunction(emitter: Emitter, node: Node): void {
 
             if (childNode.kind == NodeKind.PARAMETER_LIST)
             {
-                //emitter.skip(Keywords.FUNCTION.length + 1)
                 let params = childNode.children;
                 emitter.consume(Keywords.FUNCTION, childNode.end);
 
 
             }
-            //emitter.insert("<" +  NodeKind[childNode.kind]+ + childNode.start + ":>");
-
 
             if (childNode.kind == NodeKind.TYPE) {
 
                let blockChildren = childNode.children;
 
 
-                //emitter.skipTo(childNode.start);
             }
             for (var j = childNode.start; j < childNode.end; j++) {
                 let char:string = emitter.source.substr(j, 1);
@@ -710,19 +703,14 @@ function emitFunction(emitter: Emitter, node: Node): void {
 
             if (childNode.kind == NodeKind.TYPE)
             {
-                //emitter.insert("***[" + emitter.source.substr(childNode.start, childNode.end - childNode.start) + "]***");
-                //emitter.skipTo(blockNode.start);
                 emitter.insert(" => ");
             }
 
 
-            //emitter.insert("</" +  NodeKind[childNode.kind]+ childNode.end + ">");
         }
-        //visitNodes(emitter, rest);
         emitter.skipNewLines = true;
 
     });
-   // emitter.insert("</" + NodeKind[node.kind] + ">");
 }
 
 function emitParametersList(emitter: Emitter, node: Node): void {
@@ -918,7 +906,7 @@ function emitClass(emitter: Emitter, node: Node): void {
             visitNode(emitter, node.findChild(NodeKind.META_LIST));
             emitter.catchup(node.start);
             if (isInterfaceLinkPrinted == false){
-                emitter.insert(`static ${INTERFACE_INF};\n`);
+                if (implementsNode) emitter.insert(`static ${INTERFACE_INF};\n`);
                 isInterfaceLinkPrinted = true;
             }
             // console.log(node)
@@ -927,6 +915,8 @@ function emitClass(emitter: Emitter, node: Node): void {
                     emitSet(emitter, node);
                     break;
                 case NodeKind.GET:
+                    emitGet(emitter, node);
+                    break;
                 case NodeKind.FUNCTION:
                     emitMethod(emitter, node);
                     break;
@@ -1118,6 +1108,66 @@ function emitMethod(emitter: Emitter, node: Node): void {
         }
         //visitNodes(emitter, node.getChildFrom(NodeKind.NAME));
 
+    });
+}
+
+function emitGet(emitter: Emitter, node: Node): void {
+    let name = node.findChild(NodeKind.NAME);
+    if (node.kind !== NodeKind.FUNCTION || name.text !== emitter.currentClassName) {
+        emitClassField(emitter, node);
+        emitter.consume('function', name.start);
+        emitter.catchup(name.end);
+    } else {
+        let mods = node.findChild(NodeKind.MOD_LIST);
+        if (mods) {
+            emitter.catchup(mods.start);
+        }
+        emitter.insert('constructor');
+
+        // Check if the class extends an Array, in which an insertion
+        // is required in the constructor. It's a weird
+        // case but necessary.
+        if(emitter.output.indexOf('extends Array') > -1) {
+
+            // Prepare the injection.
+            var className = name.text;
+            var injection = '\nvar thisAny:any=this;\nthisAny.__proto__ = ' + className + '.prototype;\n';
+
+            // Find position of insertion.
+            // Enter child nodes and process 1 by 1...
+            emitter.withScope(getFunctionDeclarations(emitter, node), () => {
+                emitter.skipTo(name.end);
+                var children = node.getChildFrom(NodeKind.NAME);
+                for (var i: number = 0; i < children.length; i++) {
+                    var child = children[i];
+                    if (child.kind !== NodeKind.BLOCK) { // visit all other nodes normally
+                        visitNode(emitter, child);
+                        // emitter.skipTo(child.end);
+                    }
+                    else { // treat block node differently
+                        // Find super()
+                        for (var j: number = 0; j < child.children.length; j++) {
+                            var grandChild = child.children[j];
+                            visitNode(emitter, grandChild);
+                            emitter.catchup(grandChild.end + 1);
+                            if (containsSuperCall(grandChild)) {
+                                emitter.insert(injection);
+                            }
+                        }
+                    }
+                }
+            });
+
+            return;
+        }
+        else {
+            emitter.skipTo(name.end);
+        }
+
+
+    }
+    emitter.withScope(getFunctionDeclarations(emitter, node), () => {
+        visitNodes(emitter, node.getChildFrom(NodeKind.NAME));
     });
 }
 

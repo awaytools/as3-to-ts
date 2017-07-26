@@ -1,7 +1,6 @@
 export class SuperArray extends Array {
 
-  static __interfaces__;
-constructor(...args){
+  constructor(...args){
     super(args);
 var thisAny:any=this;
 thisAny.__proto__ = SuperArray.prototype;

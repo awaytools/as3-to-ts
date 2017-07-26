@@ -1,7 +1,6 @@
 export class Casting {
 
-    static __interfaces__;
-constructor(){
+    constructor(){
 
         var v0:string = "HEY";
         this.thisMethodIsInTheClassScope(v0.toLowerCase());

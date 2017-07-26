@@ -1,8 +1,7 @@
 import { AS3Utils } from "./AS3Utils";
 export class PrimitiveCheck {
 
-  static __interfaces__;
-constructor(){
+  constructor(){
 
     var myVar;
     if(typeof myVar === 'number')     { console.log("it's a number"); }

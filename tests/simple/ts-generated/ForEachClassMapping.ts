@@ -2,8 +2,7 @@ import { MappedClass } from "./MappedClass";
 
 export class ForEachClassMapping
 {
-	static __interfaces__;
-constructor(){
+	constructor(){
 		var myObj:any = {};
 		var a:MappedClass = new MappedClass("a");
 		myObj.a = a;
@@ -24,8 +23,7 @@ constructor(){
 
 class MappedClass
 {
-	static __interfaces__;
-public value:string;
+	public value:string;
 	constructor(value)
 	{
 		this.value = value;

@@ -13,8 +13,6 @@
     "pretest": "npm run -s compile",
     "test": "npm run pretest && npm run test:simple && npm run test:compound",
     "test:simple": "node tests/simple/SimpleTests.js",
-    "test:execute:webstorm": "node %NODE_DEBUG_OPTION% tests/executable/ExecutableTest.js focused=LoopTestsAbstracts",
-    "test:execute": "node tests/executable/ExecutableTest.js focused=LoopTestsAbstracts tsc=true",
     "test:compound": "node tests/compound/CompoundTests.js"
   },
   "keywords": [

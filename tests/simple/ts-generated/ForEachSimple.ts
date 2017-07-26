@@ -1,8 +1,7 @@
 ﻿
 export class ForEachSimple
 {
-    static __interfaces__;
-constructor(){
+    constructor(){
         var myObj:any = {a:2, b:3, c:40};
         for  (var __$nflvKey  in myObj)
         {
