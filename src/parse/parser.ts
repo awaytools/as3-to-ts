@@ -97,7 +97,7 @@ export function consume(parser:AS3Parser, text:string):Token {
         let msg =
             `unexpected token : ${parser.tok.text}(${pos.line},${pos.col}) ` +
             `in file ${parser.sourceFile.path} expected: ${text}`;
-        throw new Error(msg);
+        // throw new Error(msg);
     }
     let result = parser.tok;
     nextToken(parser);
