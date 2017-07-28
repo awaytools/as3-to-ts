@@ -2,7 +2,7 @@ import Node, { createNode } from "../../syntax/node";
 import NodeKind from "../../syntax/nodeKind";
 import Emitter, {
     EmitterOptions,
-    visitNode
+    visitNode, emitIdent
 } from "../../emit/emitter";
 
 function visit (emitter: Emitter, node: Node): boolean {
@@ -38,18 +38,18 @@ function visit (emitter: Emitter, node: Node): boolean {
             }
             else {
 
-                visitNode(emitter, leftLiteral);
-                visitNode(emitter, rightNode);
-                emitter.skipTo(rightNode.end);
-
-                // 80pro hotfix for missing "]"
-                if(rightNode.kind==NodeKind.ARRAY_ACCESSOR){
-                    emitter.insert('] ');
-                }
-                emitter.insert("].nodeValue");
-                emitter.skipTo(node.end);
-
-                return true;
+                // visitNode(emitter, leftLiteral);
+                // visitNode(emitter, rightNode);
+                // emitter.skipTo(rightNode.end);
+				//
+                // // 80pro hotfix for missing "]"
+                // if(rightNode.kind==NodeKind.ARRAY_ACCESSOR){
+                //     emitter.insert('] ');
+                // }
+                // emitter.insert("].nodeValue");
+                // emitter.skipTo(node.end);
+				//
+                // return true;
             }
         }
     }
