@@ -1,4 +1,4 @@
- export class GetSet {
+  export class GetSet {
 
     constructor(){
 

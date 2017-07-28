@@ -1,4 +1,5 @@
 import { MappedClass } from "./MappedClass";
+import { bound } from "as3-to-ts/src/bound";
 
 export class ForEachClassMapping
 {
@@ -29,7 +30,8 @@ class MappedClass
 		this.value = value;
 	}
 
-	public toString = ():string => 
+	@bound
+public toString():string
 	{
 		return this.value;
 	}

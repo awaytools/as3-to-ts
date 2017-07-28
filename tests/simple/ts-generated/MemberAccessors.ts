@@ -1,3 +1,4 @@
+import { bound } from "as3-to-ts/src/bound";
 export class Accessors {
 
     public memberVar:string = "hello";
@@ -6,7 +7,8 @@ export class Accessors {
         this.memberMethod();
     }
 
-    public memberMethod = ():void =>  {
+    @bound
+public memberMethod():void {
         console.log(this.memberVar);
 
         var a:string = "a";

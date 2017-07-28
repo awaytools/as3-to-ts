@@ -1,3 +1,4 @@
+import { bound } from "as3-to-ts/src/bound";
 /**
  * Created by palebluedot on 5/3/17.
  */
@@ -5,7 +6,8 @@ export class Unreachable {
     constructor(){
         this.demonstrate();
     }
-    public demonstrate = ():number =>  {
+    @bound
+public demonstrate():number {
 
         var tPow:number = 1;
         var tExp:number = 1;

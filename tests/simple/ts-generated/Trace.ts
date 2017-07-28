@@ -1,4 +1,4 @@
- export class Trace  {
+  export class Trace  {
     constructor(){
       console.log("hello!");
       console.log("tracing 1, 2, 3...");

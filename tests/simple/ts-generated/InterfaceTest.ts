@@ -1,3 +1,4 @@
+import { bound } from "as3-to-ts/src/bound";
 
 export class InterfaceTest
 {
@@ -14,7 +15,8 @@ interface myInterface{
 
 class MyClass implements myInterface{
 	static __interfaces__;
-public myFunc = (value:number):number => 
+@bound
+public myFunc(value:number):number
 	{
 		return 10
 	}

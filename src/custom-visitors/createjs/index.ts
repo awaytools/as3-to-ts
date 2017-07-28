@@ -32,10 +32,10 @@ function visit (emitter: Emitter, node: Node): boolean {
 
 function postProcessing (emitterOptions: EmitterOptions, contents: string): string {
     // fix createjs imports if using CommonJS
-    if (!emitterOptions.useNamespaces) {
-        contents = contents.replace(/import { ([a-zA-Z]+) } from ".*createjs\/([a-zA-Z]+)";/gm, "import $1 = createjs.$1;");
-    }
-
+ //   if (!emitterOptions.useNamespaces) {
+///        contents = contents.replace(/import { ([a-zA-Z]+) } from ".*createjs\/([a-zA-Z]+)";/gm, "import $1 = createjs.$1;");
+ //   }
+/*
     // Replace all 'var' to block-scoped 'let'
     contents = contents.replace(/\b(var)\b/gm, "let");
 
@@ -65,7 +65,7 @@ function postProcessing (emitterOptions: EmitterOptions, contents: string): stri
             }
         }
     }
-
+*/
     return contents;
 }
 

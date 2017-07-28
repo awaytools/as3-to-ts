@@ -103,6 +103,8 @@ as3Files.forEach(file => {
   let expectedTsFile = path.resolve(comparisonDirectory, identifier + '.ts');
   if(fs.existsSync(expectedTsFile)) {
     let expectedContents = fs.readFileSync(expectedTsFile).toString();
+    expectedContents = expectedContents.replace(/\r\n?/g, '\n');
+    contents = contents.replace(/\r\n?/g, '\n');
     if(expectedContents === contents) {
       console.log(colors.green("  ✔ " + identifier + '.as -> ' + identifier + '.ts'));
       passed++;

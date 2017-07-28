@@ -8,6 +8,9 @@ export class XML {
 
     sport.name["isCool"] = '→';
 
+    var some_numbers:number[] = [];
+    some_numbers.push(0);
+    console.log('sport name isCool: ' + sport.name.attributes[some_numbers[0]].nodeValue);
     console.log('sport name isCool: ' + sport.name.attributes['isCool'].nodeValue);
     console.log('sport name isCool: ' + sport.name.attribute("isCool"));
   }

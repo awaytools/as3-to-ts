@@ -139,14 +139,14 @@ export function visitNode(emitter: Emitter, node: Node): void {
         emitter.catchup(node.start);
         visitNodes(emitter, node.children);
     };
-
     //if(VERBOSE >= 2 && VISITORS[node.kind]) {
     if((VERBOSE_MASK & ReportFlags.NODES_TREE) == ReportFlags.NODES_TREE && VISITORS[node.kind]) {
-        console.log("visit:" + VISITORS[node.kind].name + "() <=====================================");
-        console.log("node: " + node.toString());
+            console.log("visit:" + VISITORS[node.kind].name + "() <=====================================");
+            console.log("node: " + node.toString());
     }
 
     visitor(emitter, node);
+
 }
 
 function filterAST(node: Node): Node {
@@ -350,6 +350,13 @@ export default class Emitter {
      * Utilities
      */
     ensureImportIdentifier (identifier: string, from = `./${identifier}`, checkGlobals: boolean = true): void {
+
+        if(identifier=="number"||identifier=="number[]"
+            ||identifier=="any"||identifier=="any[]"
+            ||identifier=="boolean"||identifier=="boolean[]"
+            ||identifier=="string"||identifier=="string[]"
+            ||identifier=="Array")
+            return;
 
         // warning if this is a as3-path, not a plain name (like shared.Node should error)
         if(WARNINGS>=1 && identifier.split(".").length>1){
@@ -773,6 +780,7 @@ function emitForEach(emitter: Emitter, node: Node): void {
     let inNode = node.children[1];
     let objNode = inNode.children[0];
     let blockNode = node.children[2];
+
     let nameTypeInitNode = varNode.findChild(NodeKind.NAME_TYPE_INIT);
     let nameNode:Node;
     let typeNode:Node;
@@ -783,7 +791,9 @@ function emitForEach(emitter: Emitter, node: Node): void {
     if(typeNode) {
         emitter.catchup(node.start);
         let typeRemapped = emitter.getTypeRemap(typeNode.text) || typeNode.text;
+        emitter.ensureImportIdentifier(typeRemapped);
         typeStr = typeRemapped == undefined ? '' : ':' + typeRemapped;
+
     }
     else {
         if (nameTypeInitNode) {
@@ -806,6 +816,7 @@ function emitForEach(emitter: Emitter, node: Node): void {
 
     visitNodes(emitter, inNode.children);
     emitter.catchup(blockNode.start + 1);
+
     let def = emitter.findDefInScope(nameNode.text);
     let declarationWord:string = "";
     if (nameTypeInitNode){
@@ -826,7 +837,24 @@ function emitForEach(emitter: Emitter, node: Node): void {
         }
     }
 
-    emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } = ${"this."}${ objNode.text }[${ FOR_IN_KEY }];\n`);
+    let def2 = emitter.findDefInScope(objNode.text);
+    let declarationWord2:string = "this.";
+   if (def2){
+        if (def2.bound ){
+            declarationWord2 = def2.bound + ".";
+        }
+        else
+        {
+            declarationWord2 = "";
+        }
+    }
+
+
+  /*  if(!objNode.text){
+
+        console.log("node", node);
+    }*/
+    emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } = ${declarationWord2}${ objNode.text }[${ FOR_IN_KEY }];\n`);
     visitNode(emitter, blockNode);
 
 }
@@ -1480,10 +1508,17 @@ function emitRelation(emitter: Emitter, node: Node): void {
             // Insert 'typeof' before instance name.
             emitter.catchup(node.start);
             emitter.insert('typeof ');
-
+            //console.log("kind = ", varNode.kind)
+            //console.log("kind = ", varNode)
             // Emit variable name.
             visitNode(emitter, varNode);
+            
+            // 80pro hotfix for missing "]"
+            if(varNode.kind==NodeKind.ARRAY_ACCESSOR){
+                emitter.insert('] ');
+            }
 
+            emitter.skipTo(varNode.end);
             // Emit equality check.
             emitter.insert(' === ');
 
@@ -1590,7 +1625,7 @@ export function emitIdent(emitter: Emitter, node: Node): void {
     ) {
         if (node.text.match(/^[A-Z]/)) {
             // Import missing identifier from this namespace
-            if (!emitter.options.useNamespaces) {
+           if (!emitter.options.useNamespaces) {
                 emitter.ensureImportIdentifier(node.text);
             }
 
@@ -1599,6 +1634,7 @@ export function emitIdent(emitter: Emitter, node: Node): void {
             emitter.insert('this.');
         }
     }
+   // emitter.ensureImportIdentifier(node.text);
 
     node.text = emitter.getIdentifierRemap(node.text) || node.text;
 

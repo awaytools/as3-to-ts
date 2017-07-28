@@ -41,6 +41,11 @@ function visit (emitter: Emitter, node: Node): boolean {
                 visitNode(emitter, leftLiteral);
                 visitNode(emitter, rightNode);
                 emitter.skipTo(rightNode.end);
+
+                // 80pro hotfix for missing "]"
+                if(rightNode.kind==NodeKind.ARRAY_ACCESSOR){
+                    emitter.insert('] ');
+                }
                 emitter.insert("].nodeValue");
                 emitter.skipTo(node.end);
 

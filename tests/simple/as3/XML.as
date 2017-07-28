@@ -14,6 +14,9 @@ public class XML {
 
     sport.name.@isCool = '→';
 
+    var some_numbers:Vector.<Number> = new Vector.<Number>();
+    some_numbers.push(0);
+    trace('sport name isCool: ' + sport.name.attributes[some_numbers[0]]);
     trace('sport name isCool: ' + sport.name.attributes['isCool']);
     trace('sport name isCool: ' + sport.name.@isCool);
   }

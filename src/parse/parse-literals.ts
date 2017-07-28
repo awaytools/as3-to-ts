@@ -14,6 +14,7 @@ export function parseArrayLiteral(parser:AS3Parser):Node {
         skip(parser, Operators.COMMA);
     }
     result.end = consume(parser, Operators.RIGHT_SQUARE_BRACKET).end;
+    //console.log(result);
     return result;
 }
 

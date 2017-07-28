@@ -4,10 +4,13 @@ export class XML {
   constructor(){
 
     var sport:XML =
-      "<sport>\n        <name isCool='yes'>Basketball</name>\n        <players>men</players>\n        <players>women</players>\n        <nationalTV>NBC</nationalTV>\n        <nationalTV>ESPN</nationalTV>\n      </sport>";
+      "<sport>\r\n        <name isCool='yes'>Basketball</name>\r\n        <players>men</players>\r\n        <players>women</players>\r\n        <nationalTV>NBC</nationalTV>\r\n        <nationalTV>ESPN</nationalTV>\r\n      </sport>";
 
     sport.name["isCool"] = '→';
 
+    var some_numbers:number[] = [];
+    some_numbers.push(0);
+    console.log('sport name isCool: ' + sport.name.attributes[some_numbers[0].nodeValue);
     console.log('sport name isCool: ' + sport.name.attributes['isCool'].nodeValue);
     console.log('sport name isCool: ' + sport.name.attribute("isCool"));
   }
