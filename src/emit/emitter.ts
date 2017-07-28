@@ -995,10 +995,17 @@ function emitMethod(emitter: Emitter, node: Node): void {
     var isConstructor:boolean = false;
     let name = node.findChild(NodeKind.NAME);
     if (node.kind !== NodeKind.FUNCTION || name.text !== emitter.currentClassName) {
+        emitter.ensureImportIdentifier("bound", "as3-to-ts/src/bound");
+        let mods = node.findChild(NodeKind.MOD_LIST);
+        if (mods)
+            emitter.catchup(mods.start);
+        else
+            emitter.catchup(name.start);
+        emitter.insert("@bound\n");
         emitClassField(emitter, node);
         emitter.consume('function', name.start);
         emitter.catchup(name.end);
-        emitter.insert(" = ");
+        //emitter.insert(" = ");
 
     } else {
         let mods = node.findChild(NodeKind.MOD_LIST);
@@ -1088,7 +1095,7 @@ function emitMethod(emitter: Emitter, node: Node): void {
                 }
                 else
                 {
-                    emitter.insert(" => ");
+                    //emitter.insert(" => ");
 
                 }
                 visitNode(emitter, childNode);
