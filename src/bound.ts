@@ -3,7 +3,7 @@
  * @param target The target class or prototype; used by the TypeScript compiler (omit function call brackets to use as a decorator).
  * @param propKey The property key of the target method; used by the TypeScript compiler (omit function call brackets to use as a decorator).
  */
-export function bound(target: Object, propKey: string | symbol) {
+export function bound(target: any, propKey: string | symbol) {
     var originalMethod = target[propKey] as Function;
 
     // Ensure the above type-assertion is valid at runtime.
