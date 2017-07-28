@@ -25,7 +25,7 @@ function postProcessing (emitterOptions: EmitterOptions, contents: string): stri
     contents = contents.replace(/import {([ 0-9a-zA-Z]+)} from "[.\/]+starling[^"]+";?/gm, "import {$1} from \"@as3web/flash\"//starling");
 
     //fix import statements for com.greensock package:
-    contents = contents.replace(/import {([ 0-9a-zA-Z]+)} from "[.\/]+com\/greensock[^"]+";?/gm, "import {$1} from \"@as3web/flash\"//com.greensock");
+    contents = contents.replace(/import {([ 0-9a-zA-Z]+)} from "[.\/]+com\/greensock[^"]+";?/gm, "import {$1} from \"gsap\"//com.greensock");
 
     // hack-fix to correct import for XMLDocumentAway
     contents = contents.replace('import { XMLDocumentAway } from "./XMLDocumentAway";','import { XMLDocumentAway } from "@as3web/flash";');
