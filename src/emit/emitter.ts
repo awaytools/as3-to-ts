@@ -826,7 +826,7 @@ function emitForEach(emitter: Emitter, node: Node): void {
         }
     }
 
-    emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } = ${ objNode.text }[${ FOR_IN_KEY }];\n`);
+    emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } = ${"this."}${ objNode.text }[${ FOR_IN_KEY }];\n`);
     visitNode(emitter, blockNode);
 
 }
