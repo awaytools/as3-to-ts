@@ -1089,9 +1089,10 @@ function emitMethod(emitter: Emitter, node: Node): void {
                 if (isConstructor) {
                     if (emitter.isExtended){
                         emitter.catchup(childNode.start + 1);
-                        emitter.insert("\n\t\tsuper();");
+                        if(!containsSuperCall(childNode)){
+                            emitter.insert("\n\t\tsuper();");
+                        }
                     }
-                    ;
                 }
                 else
                 {
