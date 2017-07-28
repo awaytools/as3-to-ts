@@ -785,6 +785,7 @@ function emitForEach(emitter: Emitter, node: Node): void {
     let nameNode:Node;
     let typeNode:Node;
     let typeStr:string = "";
+    let castStr:string = "";
     let variableContNode = nameTypeInitNode ? nameTypeInitNode : node;
     nameNode = variableContNode.findChild(NodeKind.NAME);
     typeNode = variableContNode.findChild(NodeKind.TYPE);
@@ -793,7 +794,7 @@ function emitForEach(emitter: Emitter, node: Node): void {
         let typeRemapped = emitter.getTypeRemap(typeNode.text) || typeNode.text;
         emitter.ensureImportIdentifier(typeRemapped);
         typeStr = typeRemapped == undefined ? '' : ':' + typeRemapped;
-
+        castStr = typeRemapped == undefined ? '' : '<' + typeRemapped + '>';
     }
     else {
         if (nameTypeInitNode) {
@@ -854,7 +855,7 @@ function emitForEach(emitter: Emitter, node: Node): void {
 
         console.log("node", node);
     }*/
-    emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } = ${declarationWord2}${ objNode.text }[${ FOR_IN_KEY }];\n`);
+    emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } = ${ castStr } ${declarationWord2}${ objNode.text }[${ FOR_IN_KEY }];\n`);
     visitNode(emitter, blockNode);
 
 }
