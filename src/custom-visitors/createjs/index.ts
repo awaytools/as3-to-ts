@@ -50,7 +50,7 @@ function postProcessing (emitterOptions: EmitterOptions, contents: string): stri
     contents = contents.replace(/\s([^\n])\s*?=>/gm, " =>");
 
     //fix import statements for com.greensock package:
-    contents = contents.replace(/import {([ 0-9a-zA-Z]+)} from "[.\/]+com\/greensock[^"]+";?/gm, "import {$1} from \"@as3web/flash\"//com.greensock");
+    //contents = contents.replace(/import {([ 0-9a-zA-Z]+)} from "[.\/]+com\/greensock[^"]+";?/gm, "import {$1} from \"@as3web/flash\"//com.greensock");
 
     // 2. Replace all `super.on{CallbackName}` calls.
     let overridesRegExp = /^(.*)\/\*override\*\/.*(public|private|protected)[^\w]+(\w+)[a-zA-Z\ =]+\([^:]+.*Event.*\)/gm;
