@@ -1533,7 +1533,10 @@ function emitRelation(emitter:Emitter, node:Node):void {
 		//       e.g. (myVector as Vector.<Boolean>)
 		if (node.lastChild.kind === NodeKind.IDENTIFIER) {
 			emitter.insert('(<');
-			emitter.insert(emitter.getTypeRemap(node.lastChild.text) || node.lastChild.text);
+			let typeText = emitter.getTypeRemap(node.lastChild.text) || node.lastChild.text;
+
+			emitter.insert(typeText);
+			emitter.ensureImportIdentifier(typeText);
 			emitter.insert('>');
 			visitNodes(emitter, node.getChildUntil(NodeKind.AS));
 			emitter.catchup(as.start);
