@@ -63,18 +63,10 @@ function visit (emitter: Emitter, node: Node): boolean {
         if(isNodeLeft(node)) {
 
             let nodeName = node.text.substr(1);
-            //emitter.skipTo(node.start + 1);
-            //emitter.insert(`["${ node.text.substr(1) }"]`);
-            //emitter.skipTo(node.end);
-            //emitter.insert(`${ nodeName }`);
             let afterAcc = isAfterArrayAccessor(node);
             emitter.skipTo(node.end);
             if (afterAcc)emitter.insert(`]`);
-            emitter.insert(`["${ node.text.substr(1) }"]`);
-            //emitter.c
-            //emitter.catchup(node.start);
-
-
+            emitter.insert(`["${ nodeName }"]`);
             return true;
         }
         else {
