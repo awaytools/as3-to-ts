@@ -841,7 +841,7 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	 }*/
 	var obj_name = objNode.text;
 	if (objNode.kind == NodeKind.ARRAY) {
-
+		console.log("WARNING: code should not iterate over inline-defined arrays!!!!")
 		obj_name = "[";
 		for (var i = 0; i < objNode.children.length; i++) {
 			obj_name += objNode.children[i].text;
@@ -880,12 +880,39 @@ function getNodeNameRecursive(objNode:Node):string{
 	var obj_name = objNode.text;
 	if(obj_name != undefined)
 		return obj_name;
+	obj_name = "";
 	if (objNode.children.length > 0) {
-		obj_name = "";
-		for (var i = 0; i < objNode.children.length; i++) {
-			obj_name += getNodeNameRecursive(objNode.children[i]);
-			if(i!=objNode.children.length-1){
-				obj_name+=".";
+		if(objNode.kind==NodeKind.CALL) {
+			for (var i = 0; i < objNode.children.length; i++) {
+				obj_name += getNodeNameRecursive(objNode.children[i]);
+				if (i < objNode.children.length - 2) {
+					obj_name += ".";
+				}
+				else if (i == objNode.children.length - 1) {
+					return obj_name += "()";
+				}
+			}
+		}
+		else if(objNode.kind==NodeKind.ARRAY_ACCESSOR) {
+			for (var i = 0; i < objNode.children.length; i++) {
+				if (i == objNode.children.length - 1) {
+					obj_name += "[";
+				}
+				obj_name += getNodeNameRecursive(objNode.children[i]);
+				if (i < objNode.children.length - 2) {
+					obj_name += ".";
+				}
+				else if (i == objNode.children.length - 1) {
+					obj_name += "]";
+				}
+			}
+		}
+		else  {
+			for (var i = 0; i < objNode.children.length; i++) {
+				obj_name += getNodeNameRecursive(objNode.children[i]);
+				if (i != objNode.children.length - 1) {
+					obj_name += ".";
+				}
 			}
 		}
 	}
