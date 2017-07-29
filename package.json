@@ -13,7 +13,8 @@
     "pretest": "npm run -s compile",
     "test": "npm run pretest && npm run test:simple && npm run test:compound",
     "test:simple": "node tests/simple/SimpleTests.js",
-    "test:compound": "node tests/compound/CompoundTests.js"
+    "test:compound": "node tests/compound/CompoundTests.js",
+    "test:simple:win": "node %NODE_DEBUG_OPTION% tests/simple/SimpleTests.js"
   },
   "keywords": [
     "actionscript",

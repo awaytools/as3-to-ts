@@ -7,6 +7,7 @@ import Emitter, {
 
 function visit (emitter: Emitter, node: Node): boolean {
 
+
     // Auto-import XML package. //80pro: added check for IDENTIFIER
     if (
         (node.kind === NodeKind.TYPE || node.kind === NodeKind.IDENTIFIER) &&
@@ -53,7 +54,6 @@ function visit (emitter: Emitter, node: Node): boolean {
             }
         }
     }
-
     // Converts xml.@myAttribute to xml.attribute('myAttribute')
     if (node.text && node.text.indexOf("@") === 0 &&
         node.parent.kind !== NodeKind.ARRAY_ACCESSOR) {
@@ -62,13 +62,23 @@ function visit (emitter: Emitter, node: Node): boolean {
 
         if(isNodeLeft(node)) {
 
-            emitter.skipTo(node.start -1);
-            emitter.insert(`["${ node.text.substr(1) }"]`);
+            let nodeName = node.text.substr(1);
+            //emitter.skipTo(node.start + 1);
+            //emitter.insert(`["${ node.text.substr(1) }"]`);
+            //emitter.skipTo(node.end);
+            //emitter.insert(`${ nodeName }`);
+            let afterAcc = isAfterArrayAccessor(node);
             emitter.skipTo(node.end);
+            if (afterAcc)emitter.insert(`]`);
+            emitter.insert(`["${ node.text.substr(1) }"]`);
+            //emitter.c
+            //emitter.catchup(node.start);
+
 
             return true;
         }
         else {
+
             node.text = `attribute("${ node.text.substr(1) }")`;
         }
     }
@@ -82,6 +92,20 @@ function isNodeLeft(node:Node):boolean {
         return isNodeLeft(node.parent);
     }
     return false;
+}
+function isAfterArrayAccessor(node:Node):boolean {
+    let nodeParent = node.parent
+    if(nodeParent) {
+        let arrayAccessorNode = nodeParent.findChild(NodeKind.ARRAY_ACCESSOR);
+        if (arrayAccessorNode) return true
+        let dotNode = nodeParent.findChild(NodeKind.DOT);
+        if (dotNode)
+        {
+            arrayAccessorNode = dotNode.findChild(NodeKind.ARRAY_ACCESSOR);
+            if (arrayAccessorNode ) return true
+        }
+    }
+    return false
 }
 
 export default {
