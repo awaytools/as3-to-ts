@@ -595,10 +595,67 @@ function emitInterface(emitter:Emitter, node:Node):void {
 			visitNode(emitter, node.findChild(NodeKind.META_LIST));
 			emitter.catchup(node.start);
 			let type = node.findChild(NodeKind.TYPE) || node.children[2];
-
 			if (node.kind === NodeKind.TYPE && node.text === "function") {
 				emitter.skip(Keywords.FUNCTION.length + 1);
-				visitNode(emitter, node.findChild(NodeKind.PARAMETER_LIST));
+				//visitNode(emitter, node.findChild(NodeKind.PARAMETER_LIST));
+				let parametersListNode = node.findChild(NodeKind.PARAMETER_LIST);
+				if (parametersListNode)
+				{
+					let params = parametersListNode.children;
+					for (var i = 0; i < params.length; i++) {
+						let parameterNode = params[i];
+						if (parameterNode.kind == NodeKind.PARAMETER)
+						{
+							let nameTypeInitNode = parameterNode.findChild(NodeKind.NAME_TYPE_INIT);
+							if (nameTypeInitNode)
+							{
+								let nameNode = nameTypeInitNode.findChild(NodeKind.NAME);
+								let typeParamNode = nameTypeInitNode.findChild(NodeKind.TYPE);
+								let initNode = nameTypeInitNode.findChild(NodeKind.INIT);
+								if (initNode)
+								{
+									//visitNode(emitter, nameNode);
+									//emitter.skipTo(nameNode.start);
+									//emitter.insert(nameNode.text);
+									if (typeParamNode)
+									{
+										emitter.catchup(nameNode.start);
+										//visitNode(emitter, nameNode);
+										//emitter.skipTo(nameNode.end);
+										//emitter.skipTo(typeParamNode.start);
+										emitter.insert(nameNode.text);
+										emitter.skipTo(typeParamNode.end);
+										emitter.insert("?:");
+
+										visitNode(emitter, typeParamNode);
+										emitter.skipTo(nameTypeInitNode.end);
+										//isitNode(emitter, initNode);
+									}
+									else
+									{
+										emitter.insert("?");
+									}
+
+
+									//emitter.skipTo(nameTypeInitNode.end);
+								}
+								else
+								{
+									visitNode(emitter, nameNode);
+									//emitter.catchup(nameTypeInitNode.end);
+								}
+
+							}
+						}
+						else
+						{
+							console.log(`emitter.ts: *** WARNING *** there is unexpected node "${parameterNode}" in PARAMETER_LIST`);
+						}
+					}
+
+				}
+
+
 				visitNode(emitter, type);
 
 			} else if (node.kind === NodeKind.GET || node.kind === NodeKind.SET) {
