@@ -1,5 +1,4 @@
 import { bound } from "as3-to-ts/src/bound";
-
 export class Being {
     public name:string;
     private _happiness:string;

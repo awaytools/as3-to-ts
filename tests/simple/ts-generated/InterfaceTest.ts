@@ -10,7 +10,7 @@ export class InterfaceTest
 
 
 interface myInterface{
-	myFunc(value:number):number
+	myFunc(value:Number):number
 }
 
 class MyClass implements myInterface{

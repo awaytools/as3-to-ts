@@ -13,7 +13,7 @@ export class ForEachClassMapping
 		myObj.c = c;
 		for  (var __$nflvKey  in myObj)
 		{
-			var value:MappedClass = myObj[__$nflvKey];
+			var value:MappedClass = <MappedClass> myObj[__$nflvKey];
 
 			console.log(value);
 		}

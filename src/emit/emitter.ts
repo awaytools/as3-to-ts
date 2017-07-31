@@ -872,6 +872,9 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	emitter.catchup(blockNode.start + 1);
 
 	let def = emitter.findDefInScope(nameNode.text);
+	if (def.type && castStr == "" ){
+		castStr = `<${def.type.toString()}>`;
+	}
 	let declarationWord:string = "";
 	if (nameTypeInitNode) {
 		declarationWord = "var ";

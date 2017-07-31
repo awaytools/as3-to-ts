@@ -1,7 +1,6 @@
 /**
  * Created by palebluedot on 4/24/17.
  */
-
 export class ForEach {
     constructor(){
 
@@ -11,7 +10,7 @@ export class ForEach {
         strings.push('cats');
         strings.push('nature');
         for (var __$nflvKey  in strings) {
-			var str:string = strings[__$nflvKey];
+			var str:string = <string> strings[__$nflvKey];
 
             console.log("a string: " + str);
         }
