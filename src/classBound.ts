@@ -26,19 +26,39 @@ export function classBound(target: any) {
         return new c();
     }
 
-    // the new constructor behaviour
-    var f : any = function () {
-        return construct(original, arguments);
+    var c : any = function () {
+        var __boundMethods__ = this.__boundMethods__;
+        var _this = this;
+        for (var key in __boundMethods__) {
+            this[key] = function (key) {
+                return function () {
+                    return __boundMethods__[key].apply(_this, arguments);
+                }
+            }(key);
+        }
+        return original.apply(this, arguments);
     }
+    c.prototype = original.prototype;
 
-    // copy prototype so intanceof operator still works
-    f.prototype = original.prototype;
+    Object.defineProperty(c, "name", {value: original.name, writable: false});
 
-    //copy statics
-    for (var p in original) if (original.hasOwnProperty(p)) f[p] = original[p];
+    for (var p in original) if (original.hasOwnProperty(p)) c[p] = original[p];
 
-    // return new constructor (will override original)
-    return f;
+    return c;
+
+    // // the new constructor behaviour
+    // var f : any = function () {
+    //     return construct(original, arguments);
+    // }
+	//
+    // // copy prototype so intanceof operator still works
+    // f.prototype = original.prototype;
+	//
+    // //copy statics
+    // for (var p in original) if (original.hasOwnProperty(p)) f[p] = original[p];
+	//
+    // // return new constructor (will override original)
+    // return f;
 
     // return a new constructor that extends the original
     // return function (...args:any[]) {
