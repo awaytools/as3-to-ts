@@ -4,7 +4,7 @@
  * @param propKey The property key of the target method; used by the TypeScript compiler (omit function call brackets to use as a decorator).
  */
 export function bound(target: any, propKey: string | symbol, descriptor: PropertyDescriptor) {
-    if (!target.__boundMethods__)
+    if (!target.hasOwnProperty("__boundMethods__"))
         target.__boundMethods__ = {};
 
     target.__boundMethods__[propKey] = target[propKey];
