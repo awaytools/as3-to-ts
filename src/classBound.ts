@@ -27,14 +27,16 @@ export function classBound(target: any) {
     }
 
     var c : any = function () {
-        var __boundMethods__ = this.__boundMethods__;
+        var __boundMethods__ = original.prototype.__boundMethods__;
         var _this = this;
         for (var key in __boundMethods__) {
-            this[key] = function (key) {
-                return function () {
-                    return __boundMethods__[key].apply(_this, arguments);
-                }
-            }(key);
+            if (!this.hasOwnProperty(key)) {
+                this[key] = function (key) {
+                    return function () {
+                        return __boundMethods__[key].apply(_this, arguments);
+                    }
+                }(key);
+            }
         }
         return original.apply(this, arguments);
     }
