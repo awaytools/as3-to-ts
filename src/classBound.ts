@@ -28,7 +28,6 @@ export function classBound(target: any) {
 
     // the new constructor behaviour
     var f : any = function () {
-        console.log("New: " + original.name);
         return construct(original, arguments);
     }
 
