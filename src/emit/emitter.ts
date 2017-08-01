@@ -171,6 +171,8 @@ export default class Emitter {
 	public isNew:boolean = false;
 	public isExtended:boolean = false;
 	public skipNewLines:boolean = false;
+	public tempVar:number = Math.random();
+	public static classList:Array<string> = [];
 
 	private _emitThisForNextIdent:boolean = true;
 	get emitThisForNextIdent():boolean {
@@ -406,6 +408,11 @@ export default class Emitter {
 			}
 		}
 		return IDENTIFIER_REMAP[text];
+	}
+
+	public static getClassesList():string
+	{
+		return Emitter.classList.join("/n");
 	}
 
 }
@@ -1026,7 +1033,6 @@ function emitClass(emitter:Emitter, node:Node):void {
 	emitDeclaration(emitter, node);
 	//let interfaces:string[] = [];
 	let name = node.findChild(NodeKind.NAME);
-
 	let content = node.findChild(NodeKind.CONTENT);
 	let contentsNode = content && content.children;
 	if (!contentsNode) {
@@ -1827,3 +1833,5 @@ export function emit(ast:Node, source:string, options?:EmitterOptions):string {
 	let emitter = new Emitter(source, options);
 	return emitter.emit(ast);
 }
+
+
