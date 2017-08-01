@@ -5,7 +5,8 @@ public class DebugClass
     public var key;
 	public function DebugClass()
 	{
-        fGetMain() as Rs;
+		var ref:String = "rs.Rs";
+        var tClass:Class = getDefinitionByName(ref) as Class;
 	}
 
 

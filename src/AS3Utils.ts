@@ -1,3 +1,4 @@
+import Library from "./Library";
 export class AS3Utils {
     static isInstanceOfInterface(instance:any, interfaceName:string):boolean
     {
@@ -18,5 +19,18 @@ export class AS3Utils {
 
         }
         return false;
+    }
+    static getDefinitionByName(classPath:string):any
+    {
+        let classlist = Library.classList;
+        var key:any = classPath;
+        if (classlist[key]) {
+            return classlist[key]
+        } else
+        {
+            console.log("AS3Utils : ***Warning*** Invalid class reference");
+            return null
+        }
+
     }
 }

@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const parse = require('../lib/parse');
 const emit = require('../lib/emit');
+const getClassesList = require('../lib/classlist');
 const colors = require('colors');
 
 // Processes incoming argv params into a dictionary where
@@ -251,6 +252,14 @@ function convertSources(sourceFolder, destinationFolder, emitterOptions) {
     fs.outputFileSync(outputFile, contents.replace(/\r\n?/g, '\n'));
     // fs.outputFileSync(outputFile + ".ast", JSON.stringify(ast, null, 2)); // uncomment to output AST file
   });
+    let libraryFile = path.resolve(destinationFolder, "./Library.ts");
+    let libContent = getClassesList();
+    if (libContent)
+    {
+        fs.outputFileSync(libraryFile, libContent);
+    }
+    //fs.outputFileSync(libraryFile, );
+
 }
 
 function loadExternalNamespaces(namespaces, emitterOptions) {

@@ -4,6 +4,7 @@ import Node, {createNode} from '../syntax/node';
 import assign = require('object-assign');
 import {CustomVisitor} from "../custom-visitors"
 import {VERBOSE_MASK, INTERFACE_UTIL, INTERFACE_METHOD, INTERFACE_INF, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
+import ClassList, {ClassRecord} from "./classlist";
 
 const util = require('util');
 
@@ -16,6 +17,7 @@ const GLOBAL_NAMES = [
 	'Namespace', 'QName', 'RegExp', 'JSON',
 	'Error', 'EvalError', 'RangeError', 'ReferenceError',
 	'SyntaxError', 'TypeError', 'URIError',
+	'getDefinitionByName'
 ];
 
 const TYPE_REMAP:{ [id:string]:string } = {
@@ -50,7 +52,8 @@ const IDENTIFIER_REMAP:{ [id:string]:string } = {
 	'ArgumentError': 'Error',
 	'DefinitionError': 'Error',
 	'SecurityError': 'Error',
-	'VerifyError': 'Error'
+	'VerifyError': 'Error',
+	'getDefinitionByName': 'AS3Utils.getDefinitionByName'
 }
 
 interface Scope {
@@ -171,8 +174,6 @@ export default class Emitter {
 	public isNew:boolean = false;
 	public isExtended:boolean = false;
 	public skipNewLines:boolean = false;
-	public tempVar:number = Math.random();
-	public static classList:Array<string> = [];
 
 	private _emitThisForNextIdent:boolean = true;
 	get emitThisForNextIdent():boolean {
@@ -378,11 +379,7 @@ export default class Emitter {
 		if (
 			this.source.indexOf(`class ${ identifier } `) === -1 && !isGloballyAvailable && !this.findDefInScope(identifier)
 		) {
-			if (identifier == INTERFACE_UTIL) {
-				this.headOutput += `import { ${ identifier } } from "as3-to-ts/src/${INTERFACE_UTIL}";\n`;
-			} else {
-				this.headOutput += `import { ${ identifier } } from "${ from }";\n`;
-			}
+			this.headOutput += `import { ${ identifier } } from "${ from }";\n`;
 			this.declareInScope({name: identifier});
 		}
 
@@ -410,15 +407,25 @@ export default class Emitter {
 		return IDENTIFIER_REMAP[text];
 	}
 
-	public static getClassesList():string
-	{
-		return Emitter.classList.join("/n");
-	}
+
+
 
 }
 
 
 function emitPackage(emitter:Emitter, node:Node):void {
+	let packageName = node.findChild(NodeKind.NAME);
+	let content = node.findChild(NodeKind.CONTENT);
+
+	if (content){
+		let classNode = content.findChild(NodeKind.CLASS);
+		if (classNode)
+		{
+			let className = classNode.findChild(NodeKind.NAME);
+			ClassList.addClass(<ClassRecord>{className:className.text, packageName:packageName.text});
+		}
+	}
+
 	if (emitter.options.useNamespaces) {
 		emitter.catchup(node.start);
 		emitter.skip(Keywords.PACKAGE.length);
@@ -1670,7 +1677,7 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			//visitNode(emitter, middleNode);
 			emitter.insert(`${INTERFACE_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
 			emitter.skipTo(node.end);
-			emitter.ensureImportIdentifier(INTERFACE_UTIL);
+			emitter.ensureImportIdentifier(INTERFACE_UTIL, `as3-to-ts/src/${INTERFACE_UTIL}`);
 			return
 		}
 	}
@@ -1724,6 +1731,7 @@ function emitOr(emitter:Emitter, node:Node):void {
 
 
 export function emitIdent(emitter:Emitter, node:Node):void {
+
 	emitter.catchup(node.start);
 
 	if (node.parent && node.parent.kind === NodeKind.DOT) {
@@ -1768,6 +1776,9 @@ export function emitIdent(emitter:Emitter, node:Node):void {
 	emitter.insert(node.text);
 	emitter.skipTo(node.end);
 	emitter.emitThisForNextIdent = true;
+	if (node.text = "getDefinitionByName") {
+		emitter.ensureImportIdentifier(INTERFACE_UTIL, `as3-to-ts/src/${INTERFACE_UTIL}`);
+	}
 }
 
 function emitDot(emitter:Emitter, node:Node) {
@@ -1825,9 +1836,7 @@ function emitArray(emitter:Emitter, node:Node):void {
 	emitter.skipTo(node.end);
 }
 
-function getIndent(tabs:number):string {
-	return
-}
+
 
 export function emit(ast:Node, source:string, options?:EmitterOptions):string {
 	let emitter = new Emitter(source, options);
