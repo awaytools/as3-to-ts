@@ -40,13 +40,30 @@ export function classBound(target: any) {
         }
         return original.apply(this, arguments);
     }
-    c.prototype = original.prototype;
+    //c.prototype = original.prototype;
 
-    Object.defineProperty(c, "name", {value: original.name, writable: false});
+    //Object.defineProperty(c, "name", {value: original.name, writable: false});
 
-    for (var p in original) if (original.hasOwnProperty(p)) c[p] = original[p];
+    //for (var p in original) if (original.hasOwnProperty(p)) c[p] = original[p];
 
-    return c;
+    var f : any = new Function("original", "var c = function " + original.name + "(){" +
+            "var __boundMethods__ = original.prototype.__boundMethods__;" +
+            "var _this = this;" +
+            "for (var key in __boundMethods__) {" +
+                "if (!this.hasOwnProperty(key)) {" +
+                    "this[key] = function (key) {" +
+                        "return function () {" +
+                            "return __boundMethods__[key].apply(_this, arguments);" +
+                        "}" +
+                    "}(key);" +
+                "}" +
+            "}" +
+            "return original.apply(this, arguments);" +
+        "};" +
+        "c.prototype = original.prototype;" +
+        "for (var p in original) if (original.hasOwnProperty(p)) c[p] = original[p]; return c;")(original);
+
+    return f;
 
     // // the new constructor behaviour
     // var f : any = function () {
