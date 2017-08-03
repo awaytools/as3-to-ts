@@ -2,6 +2,9 @@ import Library from "./Library";
 export class AS3Utils {
     static isInstanceOfInterface(instance:any, interfaceName:string):boolean
     {
+        if (!instance)
+            return false;
+
         var superRef = instance;
         while (superRef = superRef['__proto__'])
         {
