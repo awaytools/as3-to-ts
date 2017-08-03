@@ -1,7 +1,7 @@
 import NodeKind, {nodeKindName} from '../syntax/nodeKind';
 import * as Keywords from '../syntax/keywords';
 import Node, {createNode} from '../syntax/node';
-import assign = require('object-assign');
+import assign = require('object-assign')
 import {CustomVisitor} from "../custom-visitors"
 import {VERBOSE_MASK, INTERFACE_UTIL, INTERFACE_METHOD, INTERFACE_INF, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
 import ClassList, {ClassRecord} from "./classlist";
@@ -1776,7 +1776,7 @@ export function emitIdent(emitter:Emitter, node:Node):void {
 	emitter.insert(node.text);
 	emitter.skipTo(node.end);
 	emitter.emitThisForNextIdent = true;
-	if (node.text = "getDefinitionByName") {
+	if (node.text == "getDefinitionByName") {
 		emitter.ensureImportIdentifier(INTERFACE_UTIL, `as3-to-ts/src/${INTERFACE_UTIL}`);
 	}
 }
