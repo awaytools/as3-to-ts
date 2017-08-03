@@ -1731,7 +1731,9 @@ function emitOr(emitter:Emitter, node:Node):void {
 
 
 export function emitIdent(emitter:Emitter, node:Node):void {
-
+	if (node.text == "getDefinitionByName") {
+		emitter.ensureImportIdentifier(INTERFACE_UTIL, `as3-to-ts/src/${INTERFACE_UTIL}`);
+	}
 	emitter.catchup(node.start);
 
 	if (node.parent && node.parent.kind === NodeKind.DOT) {
@@ -1776,9 +1778,7 @@ export function emitIdent(emitter:Emitter, node:Node):void {
 	emitter.insert(node.text);
 	emitter.skipTo(node.end);
 	emitter.emitThisForNextIdent = true;
-	if (node.text == "getDefinitionByName") {
-		emitter.ensureImportIdentifier(INTERFACE_UTIL, `as3-to-ts/src/${INTERFACE_UTIL}`);
-	}
+
 }
 
 function emitDot(emitter:Emitter, node:Node) {
