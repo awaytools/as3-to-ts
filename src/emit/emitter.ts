@@ -1070,7 +1070,17 @@ function emitClass(emitter:Emitter, node:Node):void {
 			visitNode(emitter, node.findChild(NodeKind.META_LIST));
 			emitter.catchup(node.start);
 			if (isInterfaceLinkPrinted == false) {
-				if (implementsNode) emitter.insert(`static ${INTERFACE_INF};\n`);
+				//if (implementsNode) emitter.insert(`static ${INTERFACE_INF};\n`);
+				if (implementsNode) {
+					let classesList = ""
+					implementsNode.children.forEach((node) => {
+
+						classesList += `"${node.text}", `;
+					});
+					classesList = classesList.substring(0, classesList.length - 2);
+					//emitter.insert(`\n${name.text}.${INTERFACE_INF} = [${classesList}];`);
+					emitter.insert(`static ${INTERFACE_INF} = [${classesList}];\n`);
+				}
 				isInterfaceLinkPrinted = true;
 			}
 			// console.log(node)
@@ -1097,7 +1107,7 @@ function emitClass(emitter:Emitter, node:Node):void {
 	});
 
 	emitter.catchup(node.end);
-	if (implementsNode) {
+/*	if (implementsNode) {
 		let classesList = ""
 		implementsNode.children.forEach((node) => {
 
@@ -1105,7 +1115,7 @@ function emitClass(emitter:Emitter, node:Node):void {
 		});
 		classesList = classesList.substring(0, classesList.length - 2);
 		emitter.insert(`\n${name.text}.${INTERFACE_INF} = [${classesList}];`);
-	}
+	}*/
 }
 
 function emitSet(emitter:Emitter, node:Node):void {
