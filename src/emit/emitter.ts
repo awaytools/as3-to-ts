@@ -1510,6 +1510,36 @@ function emitCall(emitter:Emitter, node:Node):void {
 	let isNew = emitter.isNew;
 	emitter.isNew = false;
 
+	let isRETURNINDEXEDARRAY = false;
+	//is RETURNINDEXEDARRAY
+	let args = node.findChild(NodeKind.ARGUMENTS);
+	if (args){
+		let arrayDotNode = args.findChild(NodeKind.DOT);
+		if (arrayDotNode) {
+			let arrayCNode = arrayDotNode.children[0] as Node;
+			let literalNode = arrayDotNode.children[1] as Node;
+			if (arrayCNode && arrayCNode && literalNode.text == 'RETURNINDEXEDARRAY') {
+				let callDot = node.findChild(NodeKind.DOT);
+				if (callDot){
+					let identifierNode = callDot.findChild(NodeKind.IDENTIFIER);
+					let literalSortNode = callDot.findChild(NodeKind.LITERAL);
+					if (identifierNode && literalSortNode && literalSortNode.text == 'sort'){
+						//emitter.consume(")", 1);
+						emitter.catchup(node.start);
+						emitter.skipTo(node.end);
+						emitter.insert(`AS3Utils.sortRETURNINDEXEDARRAY(${identifierNode.text})`);
+						emitter.ensureImportIdentifier(INTERFACE_UTIL, `as3-to-ts/src/${INTERFACE_UTIL}`);
+						//emitter.insert("*|*");
+
+						isRETURNINDEXEDARRAY = true;
+
+					}
+				}
+
+			}
+		}
+	}
+
 	if (node.children[0].kind === NodeKind.VECTOR) {
 		if (isNew) {
 			let vector = node.children[0];
@@ -1560,8 +1590,8 @@ function emitCall(emitter:Emitter, node:Node):void {
 		}
 	}
 
+ 	if (isRETURNINDEXEDARRAY == false)visitNodes(emitter, node.children);
 
-	visitNodes(emitter, node.children);
 }
 
 function isCast(emitter:Emitter, node:Node):boolean {

@@ -5,8 +5,11 @@ public class DebugClass
     public var key;
 	public function DebugClass()
 	{
-		var ref:String = "rs.Rs";
-        var tClass:Class = getDefinitionByName(ref) as Class;
+        for (var i:int = 0; i < tArray.length; i++) {
+            tTrans.push(fGetText(tArray[i]));
+            tTemp.push(tArray[i])
+        }
+        var tSort:Array = tTrans.sort(Array.RETURNINDEXEDARRAY);
 	}
 
 
