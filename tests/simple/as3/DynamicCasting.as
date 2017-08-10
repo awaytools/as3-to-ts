@@ -1,13 +1,11 @@
 package
 {
-public class DebugClass
+public class DynamicCasting
 {
-	public function DebugClass()
+	public function DynamicCasting()
 	{
         return (new pRootClass()) as DebugClass;
 	}
-
-
 }
 }
 
