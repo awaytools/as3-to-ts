@@ -354,7 +354,6 @@ export default class Emitter {
 	 * Utilities
 	 */
 	ensureImportIdentifier(identifier:string, from = `./${identifier}`, checkGlobals:boolean = true):void {
-
 		if (identifier == "number" || identifier == "number[]"
 			|| identifier == "any" || identifier == "any[]"
 			|| identifier == "boolean" || identifier == "boolean[]"
@@ -1164,7 +1163,8 @@ function emitMethod(emitter:Emitter, node:Node):void {
 	var isConstructor:boolean = false;
 	let name = node.findChild(NodeKind.NAME);
 	if (node.kind !== NodeKind.FUNCTION || name.text !== emitter.currentClassName) {
-		emitter.ensureImportIdentifier("bound", "as3-to-ts/src/bound");
+		let pathToRoot = ClassList.getLastPathToRoot();
+		emitter.ensureImportIdentifier("bound", `${pathToRoot}bound`);
 		let mods = node.findChild(NodeKind.MOD_LIST);
 		if (mods)
 			emitter.catchup(mods.start);
@@ -1528,7 +1528,8 @@ function emitCall(emitter:Emitter, node:Node):void {
 						emitter.catchup(node.start);
 						emitter.skipTo(node.end);
 						emitter.insert(`AS3Utils.sortRETURNINDEXEDARRAY(${identifierNode.text})`);
-						emitter.ensureImportIdentifier(INTERFACE_UTIL, `as3-to-ts/src/${INTERFACE_UTIL}`);
+						let pathToRoot = ClassList.getLastPathToRoot();
+						emitter.ensureImportIdentifier(INTERFACE_UTIL, `${pathToRoot}${INTERFACE_UTIL}`);
 						//emitter.insert("*|*");
 
 						isRETURNINDEXEDARRAY = true;
@@ -1717,7 +1718,8 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			//visitNode(emitter, middleNode);
 			emitter.insert(`${INTERFACE_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
 			emitter.skipTo(node.end);
-			emitter.ensureImportIdentifier(INTERFACE_UTIL, `as3-to-ts/src/${INTERFACE_UTIL}`);
+			let pathToRoot = ClassList.getLastPathToRoot();
+			emitter.ensureImportIdentifier(INTERFACE_UTIL, `${pathToRoot}${INTERFACE_UTIL}`);
 			return
 		}
 	}
@@ -1772,7 +1774,8 @@ function emitOr(emitter:Emitter, node:Node):void {
 
 export function emitIdent(emitter:Emitter, node:Node):void {
 	if (node.text == "getDefinitionByName") {
-		emitter.ensureImportIdentifier(INTERFACE_UTIL, `as3-to-ts/src/${INTERFACE_UTIL}`);
+		let pathToRoot = ClassList.getLastPathToRoot();
+		emitter.ensureImportIdentifier(INTERFACE_UTIL, `${pathToRoot}${INTERFACE_UTIL}`);
 	}
 	emitter.catchup(node.start);
 

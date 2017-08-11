@@ -260,6 +260,15 @@ function convertSources(sourceFolder, destinationFolder, emitterOptions) {
     }
     //fs.outputFileSync(libraryFile, );
 
+    //let as3UtilsFIle = path.resolve("./", "../src/AS3Utils.ts");
+/*    fs.copySync("./transpiler/AS3Utils.ts",  destinationFolder.toString() + "/AS3Utils.ts");
+    fs.copySync("./transpiler/ClassBound.ts",  destinationFolder.toString() + "/ClassBound.ts");
+    fs.copySync("./transpiler/bound.ts",  destinationFolder.toString() + "/bound.ts");*/
+
+    fs.copySync("./node_modules/as3-to-ts/src/AS3Utils.ts",  destinationFolder.toString() + "/AS3Utils.ts");
+    fs.copySync("./node_modules/as3-to-ts/src/ClassBound.ts",  destinationFolder.toString() + "/ClassBound.ts");
+    fs.copySync("./node_modules/as3-to-ts/src/bound.ts",  destinationFolder.toString() + "/bound.ts");
+
 }
 
 function loadExternalNamespaces(namespaces, emitterOptions) {

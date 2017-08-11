@@ -7,6 +7,29 @@ export default class ClassList {
             ClassList.classList.push(classRecord);
         }
     }
+
+    public static getLastPathToRoot():string{
+       let classRecord:ClassRecord = ClassList.classList[ClassList.classList.length - 1];
+
+       let packages = classRecord.packageName.split(".");
+       let packageLevel:number = 0
+       if (packages.length < 2) {
+           if (packages[0].length > 0) {
+               packageLevel = 1;
+           } else {
+               packageLevel = 0;
+           }
+       } else	{
+           packageLevel = packages.length;
+       }
+       let path = packageLevel == 0 ? "./" : "" ;
+       for (var i = 0; i < packageLevel; i++) {
+           path += "../";
+
+       }
+       return path
+    }
+
 }
 
 export interface ClassRecord {
