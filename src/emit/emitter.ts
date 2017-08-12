@@ -1035,8 +1035,24 @@ function getClassDeclarations(emitter:Emitter, className:string, contentsNode:No
 
 
 function emitClass(emitter:Emitter, node:Node):void {
+	emitter.catchup(node.start);
+	visitNode(emitter, node.findChild(NodeKind.META_LIST));
+	let mods = node.findChild(NodeKind.MOD_LIST);
+	if (mods && mods.children.length) {
+		emitter.catchup(mods.start);
+		emitter.insert("\n@classBound\n");
+		let insertExport = false;
+		mods.children.forEach(node => {
+			if (node.text !== 'private') {
+				insertExport = true;
+			}
+			emitter.skipTo(node.end);
+		});
+		if (insertExport) {
+			emitter.insert('export');
+		}
+	}
 
-	emitDeclaration(emitter, node);
 	//let interfaces:string[] = [];
 	let name = node.findChild(NodeKind.NAME);
 	let content = node.findChild(NodeKind.CONTENT);
@@ -1103,6 +1119,9 @@ function emitClass(emitter:Emitter, node:Node):void {
 					visitNode(emitter, node);
 			}
 		});
+
+		let pathToRoot = ClassList.getLastPathToRoot();
+		emitter.ensureImportIdentifier("classBound", `${pathToRoot}ClassBound`);
 	});
 
 	emitter.catchup(node.end);
