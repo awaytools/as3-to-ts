@@ -1,19 +1,8 @@
 package
 {
-import flash.display.Sprite;
-import shared.utilities.RNG;
-/**
- * http://www.faqs.org/rfcs/rfc1321.html
- */
-public class DebugClass extends Sprite
+public interface DebugClass
 {
-    public var pRNG:RNG;
-    public function DebugClass()
-    {
-
-    }
-
+    function myFunction(var1:Number = 7, var2:String = "13", var3:uint = 17):Number
 }
-
 }
 

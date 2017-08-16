@@ -32,8 +32,10 @@ function postProcessing (emitterOptions: EmitterOptions, contents: string): stri
     //return here if you want to prevent import cleanup
     //return contents;
 
+    //contents = contents.replace(/\r\n?/g, '\n');
     // find all imports:
-    let allImports=contents.match(/import {([ 0-9a-zA-Z]+)} from "[.\/@0-9a-zA-Z]+";?\n/gm);
+    return contents;
+/*    let allImports=contents.match(/import {([ 0-9a-zA-Z]+)} from "[.\/@0-9a-zA-Z]+";?/gm);
     if(allImports){
         allImports.forEach(function(oneImport){
             // find the classname only
@@ -64,7 +66,7 @@ function postProcessing (emitterOptions: EmitterOptions, contents: string): stri
         });
     }
 
-    return contents;
+    return contents;*/
 }
 export default {
     visit: visit,

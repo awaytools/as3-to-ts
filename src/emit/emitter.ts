@@ -3,8 +3,8 @@ import * as Keywords from '../syntax/keywords';
 import Node, {createNode} from '../syntax/node';
 import assign = require('object-assign')
 import {CustomVisitor} from "../custom-visitors"
-import {VERBOSE_MASK, INTERFACE_UTIL, INTERFACE_METHOD, INTERFACE_INF, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
-import ClassList, {ClassRecord} from "./classlist";
+import {VERBOSE_MASK, AS3_UTIL, INTERFACE_METHOD, INTERFACE_INF, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
+import ClassList, {ClassMember, ClassMemberKind, ClassRecord, ModifierKind, MODIFIERS} from "./classlist";
 
 const util = require('util');
 
@@ -418,10 +418,32 @@ function emitPackage(emitter:Emitter, node:Node):void {
 
 	if (content){
 		let classNode = content.findChild(NodeKind.CLASS);
+		let classRecord:ClassRecord;
 		if (classNode)
 		{
 			let className = classNode.findChild(NodeKind.NAME);
-			ClassList.addClass(<ClassRecord>{className:className.text, packageName:packageName.text});
+			let classList = ClassList.classList;
+			classRecord = new ClassRecord(packageName.text, className.text);
+		}
+		let interfaceNode = content.findChild(NodeKind.INTERFACE);
+		if (interfaceNode)
+		{
+			let interfaceName = interfaceNode.findChild(NodeKind.NAME);
+			let interfaceList = ClassList.classList;
+			classRecord = new ClassRecord(packageName.text, interfaceName.text);
+
+		}
+		if (classRecord)
+		{
+			if (ClassList.isScanning)
+			{
+				ClassList.addClass(classRecord);
+			}
+			else
+			{
+				ClassList.setCurrentClassRecord(classRecord);
+			}
+
 		}
 	}
 
@@ -460,6 +482,11 @@ function emitEmbed(emitter:Emitter, node:Node):void {
 
 function emitImport(emitter:Emitter, node:Node):void {
 	let statement = Keywords.IMPORT + " ";
+/*	let split = node.text.split('.');
+	let name = split[split.length - 1];
+	split.pop();
+	let ns = split.join(".");*/
+	ClassList.addImportToLast(node.text.concat());
 
 	// emit one import statement for each definition found in that namespace
 	if (node.text.indexOf("*") !== -1) {
@@ -1067,7 +1094,9 @@ function emitClass(emitter:Emitter, node:Node):void {
 	if (extendsNode) {
 		emitIdent(emitter, extendsNode);
 		emitter.isExtended = true;
+		ClassList.addExtendToLast(extendsNode.text);
 		emitter.ensureImportIdentifier(extendsNode.text);
+
 	} else {
 		emitter.isExtended = false;
 	}
@@ -1075,7 +1104,10 @@ function emitClass(emitter:Emitter, node:Node):void {
 	// ensure implements identifiers are being imported
 	let implementsNode = node.findChild(NodeKind.IMPLEMENTS_LIST);
 	if (implementsNode) {
-		implementsNode.children.forEach((node) => emitter.ensureImportIdentifier(node.text))
+		implementsNode.children.forEach((node) => {
+			emitter.ensureImportIdentifier(node.text);
+			ClassList.addInterfaceToLast(node.text);
+		})
 	}
 
 	emitter.withScope(getClassDeclarations(emitter, name.text, contentsNode), scope => {
@@ -1099,6 +1131,7 @@ function emitClass(emitter:Emitter, node:Node):void {
 				isInterfaceLinkPrinted = true;
 			}
 			// console.log(node)
+			storeClassMember(node);
 			switch (node.kind) {
 				case NodeKind.SET:
 					emitSet(emitter, node);
@@ -1121,20 +1154,96 @@ function emitClass(emitter:Emitter, node:Node):void {
 		});
 
 		let pathToRoot = ClassList.getLastPathToRoot();
-		emitter.ensureImportIdentifier("classBound", `${pathToRoot}ClassBound`);
+		emitter.ensureImportIdentifier("classBound", `${pathToRoot}classBound`);
 	});
 
 	emitter.catchup(node.end);
-/*	if (implementsNode) {
-		let classesList = ""
-		implementsNode.children.forEach((node) => {
 
-			classesList += `"${node.text}", `;
-		});
-		classesList = classesList.substring(0, classesList.length - 2);
-		emitter.insert(`\n${name.text}.${INTERFACE_INF} = [${classesList}];`);
-	}*/
 }
+
+function storeClassMember(node:Node):void
+{
+	let modeListNode = node.findChild(NodeKind.MOD_LIST);
+	let isStatic:boolean = false;
+	let isOverridden:boolean = false;
+	let nsModifier:number = 0;
+	if (modeListNode)
+	{
+		let modifiers = modeListNode.findChildren(NodeKind.MODIFIER);
+		modifiers.forEach((mode) => {
+
+			if (mode.text == Keywords.STATIC) isStatic = true;
+			if (mode.text == Keywords.OVERRIDE) isOverridden = true;
+			nsModifier = MODIFIERS[mode.text] ;
+			//if (mode.text == Keywords.PUBLIC || )
+		});
+	}
+	let nameNode;
+	let typeNode;
+
+	switch (node.kind) {
+		case NodeKind.SET:
+		case NodeKind.GET:
+		case NodeKind.FUNCTION:
+			nameNode = node.findChild(NodeKind.NAME);
+			typeNode = node.findChild(NodeKind.TYPE);
+			break;
+		case NodeKind.VAR_LIST:
+		case NodeKind.CONST_LIST:
+			let nameInitNode = node.findChild(NodeKind.NAME_TYPE_INIT);
+			if (nameInitNode)
+			{
+				nameNode = nameInitNode.findChild(NodeKind.NAME);
+				typeNode = nameInitNode.findChild(NodeKind.TYPE);
+
+
+			}
+			break;
+		default:
+			return;
+	}
+	let classMemberKind:number = 0;
+	switch (node.kind) {
+		case NodeKind.SET:
+			classMemberKind = ClassMemberKind.SET;
+			break;
+		case NodeKind.GET:
+			classMemberKind = ClassMemberKind.GET;
+			break;
+		case NodeKind.FUNCTION:
+			classMemberKind = ClassMemberKind.METHOD;
+			break;
+		case NodeKind.VAR_LIST:
+			classMemberKind = ClassMemberKind.VARIABLE;
+			break;
+		case NodeKind.CONST_LIST:
+			classMemberKind = ClassMemberKind.CONST;
+			break;
+	}
+
+	if (nameNode)
+	{
+		let typeStr = typeNode && typeNode.text ? typeNode.text : "";
+		let classMember:ClassMember = new ClassMember(nameNode.text, ClassMemberKind.VARIABLE, typeStr);
+		classMember.nsModifier = nsModifier ? nsModifier : ModifierKind.PROTECTED;
+		classMember.isStatic = isStatic;
+		classMember.isOverridden = isOverridden;
+		classMember.kind = classMemberKind;
+		if (isStatic)
+		{
+			ClassList.addStaticMemberToLast(classMember);
+		}
+		else
+		{
+			ClassList.addClassMemberToLast(classMember);
+		}
+		//console.log("***<" + nameNode.text +  ":" + typeStr + "/" + classMember.nsModifier  + "/isStatic:" + isStatic + "/isOverride:" + isOverride + ">***");
+
+
+	}
+
+}
+
 
 function emitSet(emitter:Emitter, node:Node):void {
 	emitClassField(emitter, node);
@@ -1548,7 +1657,7 @@ function emitCall(emitter:Emitter, node:Node):void {
 						emitter.skipTo(node.end);
 						emitter.insert(`AS3Utils.sortRETURNINDEXEDARRAY(${identifierNode.text})`);
 						let pathToRoot = ClassList.getLastPathToRoot();
-						emitter.ensureImportIdentifier(INTERFACE_UTIL, `${pathToRoot}${INTERFACE_UTIL}`);
+						emitter.ensureImportIdentifier(AS3_UTIL, `${pathToRoot}${AS3_UTIL}`);
 						//emitter.insert("*|*");
 
 						isRETURNINDEXEDARRAY = true;
@@ -1735,10 +1844,10 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			let rightIdent = children[2];
 			//visitNode(emitter, leftIdent);
 			//visitNode(emitter, middleNode);
-			emitter.insert(`${INTERFACE_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
+			emitter.insert(`${AS3_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
 			emitter.skipTo(node.end);
 			let pathToRoot = ClassList.getLastPathToRoot();
-			emitter.ensureImportIdentifier(INTERFACE_UTIL, `${pathToRoot}${INTERFACE_UTIL}`);
+			emitter.ensureImportIdentifier(AS3_UTIL, `${pathToRoot}${AS3_UTIL}`);
 			return
 		}
 	}
@@ -1794,9 +1903,18 @@ function emitOr(emitter:Emitter, node:Node):void {
 export function emitIdent(emitter:Emitter, node:Node):void {
 	if (node.text == "getDefinitionByName") {
 		let pathToRoot = ClassList.getLastPathToRoot();
-		emitter.ensureImportIdentifier(INTERFACE_UTIL, `${pathToRoot}${INTERFACE_UTIL}`);
+		emitter.ensureImportIdentifier(AS3_UTIL, `${pathToRoot}${AS3_UTIL}`);
 	}
 	emitter.catchup(node.start);
+	let staticClass:ClassRecord;
+	if (ClassList.isScanning == false)
+	{
+		staticClass = ClassList.checkStaticOnCurrent(node.text);
+		if (staticClass)
+		{
+			console.log("$$$$$$$$$$$$$ Static " + node.text + "  " + staticClass.getFullPath());
+		}
+	}
 
 	if (node.parent && node.parent.kind === NodeKind.DOT) {
 		//in case of dot just check the first
