@@ -1909,7 +1909,7 @@ export function emitIdent(emitter:Emitter, node:Node):void {
 	let staticClass:ClassRecord;
 	if (ClassList.isScanning == false)
 	{
-		staticClass = ClassList.checkStaticOnCurrent(node.text);
+		staticClass = ClassList.checkStaticSuperOnCurrent(node.text);
 		if (staticClass)
 		{
 			console.log("$$$$$$$$$$$$$ Static " + node.text + "  " + staticClass.getFullPath());

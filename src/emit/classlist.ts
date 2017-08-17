@@ -20,7 +20,7 @@ export default class ClassList {
             let targetClassRecord = classes[i];
             if (targetClassRecord.className == classRecord.className && targetClassRecord.packageName == classRecord.packageName)
             {
-                console.log("setCurrent" + classRecord.getFullPath());
+                console.log("setCurrent:" + classRecord.getFullPath());
                 ClassList.currentClassRecord = targetClassRecord;
                 //ClassList.showMembers();
                 return
@@ -28,7 +28,6 @@ export default class ClassList {
 
         }
         ClassList.currentClassRecord = null;
-        console.log("^^^^^^^^^^^^^^^^^^^^ClassWasNotScanned:" + classRecord.getFullPath());
     }
 
     public static getLastPathToRoot():string{
@@ -107,7 +106,7 @@ export default class ClassList {
         }
     }
 
-    public static checkStaticOnCurrent(ident:string):ClassRecord
+    public static checkStaticSuperOnCurrent(ident:string):ClassRecord
     {
         //if (ClassList.isScanning) return null;
 
@@ -334,6 +333,12 @@ export class ClassRecord
     {
        let path:string = this.packageName && this.packageName != "" ? this.packageName + "." + this.className : this.className;
        return path
+    }
+
+    public getRelativeFullPath(relativeTo:ClassRecord):string
+    {
+        let splitThis:Array<string> = this.packageName.split(".");
+        let splitTarget:Array<string> = relativeTo.packageName.split(".");
     }
 
 }
