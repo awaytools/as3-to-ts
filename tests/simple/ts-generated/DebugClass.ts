@@ -1,19 +1,18 @@
-import { classBound } from "./ClassBound";
+import { MyClass } from "./MyClass";
+import { MyInterface } from "./MyInterface";
+import { classBound } from "./classBound";
 
-import { Sprite } from "@as3web/flash"
-import {RNG} from "./shared/utilities/RNG";
-/**
- * http://www.faqs.org/rfcs/rfc1321.html
- */
 
 @classBound
-export class DebugClass extends Sprite
+export class DebugClass extends MyClass implements MyInterface
 {
-    public pRNG:RNG;
-    constructor(){
-		super();
 
+    static __interfaces__ = ["MyInterface"];
+constructor(){
+		super();
+        MyClass.myVar;
     }
+
 
 }
 

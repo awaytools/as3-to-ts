@@ -3,6 +3,7 @@ const path = require('path');
 const parse = require('../lib/parse');
 const emit = require('../lib/emit');
 const getClassesList = require('../lib/classlist');
+const optimizeAST = require('../lib/optimize');
 const colors = require('colors');
 
 // Processes incoming argv params into a dictionary where
@@ -201,6 +202,35 @@ function populateNamespaces(sourceFolder, emitterOptions) {
   });
 }
 
+function preparatoryScan(sourceFolder, emitterOptions) {
+
+    // Get a list of as3 files from the tmp folder.
+    let filesAS = readdir(sourceFolder).filter(file => /.as$/.test(file));
+
+    // Sweep all files.
+    filesAS.forEach(file => {
+        let inputFile = path.resolve(sourceFolder, file);
+
+        // Identify source file.
+        let segments = file.match(/([a-zA-Z0-9]+)/g);
+        segments.pop();
+        let identifier = segments.pop();
+        console.log(colors.blue("preparing    ✔ " + identifier));
+
+        let content = fs.readFileSync(inputFile, 'UTF-8');
+        let ast;
+        try { ast = parse(path.basename(file), content); }
+        catch(err) { console.log(err); }
+        let contents;
+        try { contents = emit(ast, content, emitterOptions); }
+        catch(err) { console.log(err); }
+
+
+    });
+
+    optimizeAST();
+}
+
 function convertSources(sourceFolder, destinationFolder, emitterOptions) {
 
   // Get a list of as3 files from the tmp folder.
@@ -279,6 +309,7 @@ module.exports = {
   collectSources: collectSources,
   resolveIncludes: resolveIncludes,
   convertSources: convertSources,
+  preparatoryScan: preparatoryScan,
   populateNamespaces: populateNamespaces,
   loadExternalNamespaces: loadExternalNamespaces
 };
