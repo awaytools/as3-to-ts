@@ -4,7 +4,7 @@ import Node, {createNode} from '../syntax/node';
 import assign = require('object-assign')
 import {CustomVisitor} from "../custom-visitors"
 import {VERBOSE_MASK, AS3_UTIL, INTERFACE_METHOD, INTERFACE_INF, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
-import ClassList, {ClassMember, ClassMemberKind, ClassRecord, ModifierKind, MODIFIERS} from "./classlist";
+import ClassList, {ClassKind, ClassMember, ClassMemberKind, ClassRecord, ModifierKind, MODIFIERS} from "./classlist";
 
 const util = require('util');
 
@@ -424,6 +424,7 @@ function emitPackage(emitter:Emitter, node:Node):void {
 			let className = classNode.findChild(NodeKind.NAME);
 			let classList = ClassList.classList;
 			classRecord = new ClassRecord(packageName.text, className.text);
+			classRecord.classKind = ClassKind.CLASS;
 		}
 		let interfaceNode = content.findChild(NodeKind.INTERFACE);
 		if (interfaceNode)
@@ -431,6 +432,7 @@ function emitPackage(emitter:Emitter, node:Node):void {
 			let interfaceName = interfaceNode.findChild(NodeKind.NAME);
 			let interfaceList = ClassList.classList;
 			classRecord = new ClassRecord(packageName.text, interfaceName.text);
+			classRecord.classKind = ClassKind.INTERFACE;
 
 		}
 		if (classRecord)
@@ -1834,17 +1836,29 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			return;
 		}
 		else {
-			// TODO: custom type interface checks are currently not checked by the compiler
+/*			// TODO: custom type interface checks are currently not checked by the compiler
 			if (WARNINGS >= 1) {
 				console.log("emitter.ts: *** WARNING *** custom type interface checks are currently not treated by the compiler.");
-			}
+			}*/
 			let children = node.children;
 			let leftIdent = children[0];
 			let middleNode = children[1];
 			let rightIdent = children[2];
 			//visitNode(emitter, leftIdent);
 			//visitNode(emitter, middleNode);
-			emitter.insert(`${AS3_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
+			let isInterface = ClassList.checkIsInterface(rightIdent.text);
+			if (isInterface)
+			{
+				console.log("^^^^^^^^^^^" + rightIdent.text + "  " + isInterface.getFullPath());
+				emitter.insert(`${AS3_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
+			}
+			else
+			{
+				console.log(">>>>>." + rightIdent.text);
+				emitter.insert(`${leftIdent.text} instanceof ${rightIdent.text}`);
+			}
+
+			//emitter.insert(`${AS3_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
 			emitter.skipTo(node.end);
 			let pathToRoot = ClassList.getLastPathToRoot();
 			emitter.ensureImportIdentifier(AS3_UTIL, `${pathToRoot}${AS3_UTIL}`);

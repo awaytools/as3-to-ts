@@ -189,6 +189,42 @@ export default class ClassList {
         return null
     }
 
+    public static checkIsInheritedInterface(ident:string):boolean
+    {
+        if (ClassList.isScanning) return null;
+
+        let classRecord:ClassRecord = ClassList.currentClassRecord;
+        let currentInheritClass:ClassRecord = classRecord;
+        do {
+            let interfaces:Array<ClassRecord>  = currentInheritClass.interfaces;
+            for (var i = 0; i < interfaces.length; i++) {
+                let targetInterface:ClassRecord = interfaces[i];
+                if (targetInterface.className == ident)
+                {
+                    return true;
+                }
+
+            }
+        }while (currentInheritClass = currentInheritClass.extended)
+
+
+        return false
+    }
+
+    public static checkIsInterface(interfaceStr:string):ClassRecord
+    {
+        if (ClassList.isScanning) return null;
+        //TODO check duplicates
+        //let classRecord:ClassRecord = ClassList.currentClassRecord;
+        let classes = ClassList.classList;
+        for (var i = 0; i < classes.length; i++) {
+            let interfaceRecord:ClassRecord = classes[i];
+            if (interfaceRecord.classKind == ClassKind.INTERFACE && interfaceRecord.className == interfaceStr) return interfaceRecord
+        }
+
+        return null
+    }
+
     public static checkStaticThisOnCurrent(ident:string):ClassRecord
     {
         if (ClassList.isScanning) return null;
@@ -232,9 +268,72 @@ export default class ClassList {
         }
 
         ClassList.isScanning = false;
+        ClassList.showAllInterfaces();
     }
 
     public static visitInterfaces(classRecord:ClassRecord, interfaceStr:string):void  //TODO combine visitInterface and visitExtends in a one loop
+    {
+ /*       let classes = ClassList.classList;
+        let matchList:Array<ClassRecord> = [];
+        let interfaceRecord:ClassRecord;
+        loopInterface:
+            for (var j = 0; j < classes.length; j++) {
+
+                let targetRecord:ClassRecord = <ClassRecord>classes[j];
+                if (targetRecord != classRecord)
+                {
+
+                    if (targetRecord.packageName == classRecord.packageName) //The same package is priority
+                    {
+                        if (targetRecord.className == interfaceStr)
+                        {
+                            interfaceRecord = targetRecord;
+                            break loopInterface;
+                        }
+                    }
+                    if (targetRecord.className == interfaceStr)
+                    {
+                        matchList.push(targetRecord);
+
+                    }
+                }
+
+            }
+
+        if (interfaceRecord == undefined)
+        {
+            if (matchList.length > 0)
+            {
+                let classRecordImports = classRecord.imports;
+                //loopIports:
+                for (var k = 0; k < matchList.length; k++) {
+                    let matchedRecord:ClassRecord = matchList[k];
+                    let fullPath:string = matchedRecord.getFullPath();
+
+                    if (classRecordImports.indexOf(fullPath) >= 0)
+                    {
+                        interfaceRecord = matchedRecord;
+                    }
+
+                }
+            }
+
+        }*/
+        let interfaceRecord:ClassRecord = ClassList.findInterfaceFromClass(classRecord, interfaceStr);
+
+        if (interfaceRecord)
+        {
+            classRecord.interfaces.push(interfaceRecord);
+            //console.log("==added '" + classRecord.getFullPath() + "  " + interfaceRecord.getFullPath());
+
+        }
+        else
+        {
+            console.log("***********Warning. Class '" + classRecord.getFullPath() + "' implements unknown interface: " + classRecord.extendsStr);
+        }
+    }
+
+    public static findInterfaceFromClass(classRecord:ClassRecord, interfaceStr:string):ClassRecord
     {
         let classes = ClassList.classList;
         let matchList:Array<ClassRecord> = [];
@@ -283,16 +382,7 @@ export default class ClassList {
 
         }
 
-        if (interfaceRecord)
-        {
-            classRecord.interfaces.push(interfaceRecord);
-            //console.log("==added '" + classRecord.getFullPath() + "  " + interfaceRecord.getFullPath());
-
-        }
-        else
-        {
-            console.log("***********Warning. Class '" + classRecord.getFullPath() + "' implements unknown interface: " + classRecord.extendsStr);
-        }
+        return interfaceRecord;
     }
 
     public static visitExtends(classRecord:ClassRecord):void
@@ -355,6 +445,19 @@ export default class ClassList {
         {
             console.log("**********Warning. Class '" + classRecord.getFullPath() + "' extends unknown class: " + classRecord.extendsStr);
         }
+    }
+
+    public static showAllInterfaces():void{
+        let classes = ClassList.classList;
+        for (var i = 0; i < classes.length; i++) {
+            let classRecord:ClassRecord = <ClassRecord>classes[i];
+            if (classRecord.classKind == ClassKind.INTERFACE)
+            {
+                console.log("GGGGGGGGGGGGGGGGGGGGGG " + classRecord.getFullPath());
+            }
+
+        }
+
     }
 
 }
@@ -435,9 +538,9 @@ export class ClassMember
 
 }
 
-const enum ClassKind {
-    CLASS,
-    INTERFACE
+export const enum ClassKind {
+    CLASS = 1,
+    INTERFACE = 2
 }
 export const enum ClassMemberKind {
     UNKNOWN = 0,
