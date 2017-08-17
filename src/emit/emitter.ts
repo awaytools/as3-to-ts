@@ -1811,9 +1811,7 @@ function emitRelation(emitter:Emitter, node:Node):void {
 
 			// Insert 'typeof' before instance name.
 			emitter.catchup(node.start);
-			emitter.insert('typeof ');
-			//console.log("kind = ", varNode.kind)
-			//console.log("kind = ", varNode)
+			//emitter.insert('typeof ');
 			// Emit variable name.
 			visitNode(emitter, varNode);
 
@@ -1824,11 +1822,13 @@ function emitRelation(emitter:Emitter, node:Node):void {
 
 			emitter.skipTo(varNode.end);
 			// Emit equality check.
-			emitter.insert(' === ');
+			//emitter.insert(' === ');
+			emitter.insert(' instanceof ');
 
 			// Replace type with string comparison.
 			let typeRemapped = emitter.getTypeRemap(typeNode.text) || typeNode.text;
-			emitter.insert(`'${typeRemapped}'`);
+			emitter.insert(`${typeRemapped}`);
+			emitter.ensureImportIdentifier(typeRemapped);
 
 			// Skip the rest... 'is Number/String/Boolean'
 			emitter.skipTo(node.end);
@@ -1849,12 +1849,10 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			let isInterface = ClassList.checkIsInterface(rightIdent.text);
 			if (isInterface)
 			{
-				console.log("^^^^^^^^^^^" + rightIdent.text + "  " + isInterface.getFullPath());
 				emitter.insert(`${AS3_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
 			}
 			else
 			{
-				console.log(">>>>>." + rightIdent.text);
 				emitter.insert(`${leftIdent.text} instanceof ${rightIdent.text}`);
 			}
 

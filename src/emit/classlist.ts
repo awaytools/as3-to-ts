@@ -268,7 +268,6 @@ export default class ClassList {
         }
 
         ClassList.isScanning = false;
-        ClassList.showAllInterfaces();
     }
 
     public static visitInterfaces(classRecord:ClassRecord, interfaceStr:string):void  //TODO combine visitInterface and visitExtends in a one loop
@@ -329,7 +328,7 @@ export default class ClassList {
         }
         else
         {
-            console.log("***********Warning. Class '" + classRecord.getFullPath() + "' implements unknown interface: " + classRecord.extendsStr);
+            //console.log("***********Warning. Class '" + classRecord.getFullPath() + "' implements unknown interface: " + classRecord.extendsStr);
         }
     }
 
@@ -443,7 +442,7 @@ export default class ClassList {
         }
         else
         {
-            console.log("**********Warning. Class '" + classRecord.getFullPath() + "' extends unknown class: " + classRecord.extendsStr);
+           // console.log("**********Warning. Class '" + classRecord.getFullPath() + "' extends unknown class: " + classRecord.extendsStr);
         }
     }
 
@@ -453,7 +452,6 @@ export default class ClassList {
             let classRecord:ClassRecord = <ClassRecord>classes[i];
             if (classRecord.classKind == ClassKind.INTERFACE)
             {
-                console.log("GGGGGGGGGGGGGGGGGGGGGG " + classRecord.getFullPath());
             }
 
         }
@@ -569,21 +567,27 @@ export function getUsedClasses():string {
 
     for (var i = 0; i < classes.length; i++) {
 
+
         let classRecord:ClassRecord = <ClassRecord>classes[i];
-        let packageStrSlashes:string = classRecord.packageName.split(".").join("/");
-        let packageStrDelims:string = classRecord.packageName.split(".").join(VARIABLE_DELIM);
-        let classPath:string = classRecord.packageName && classRecord.packageName != "" ? packageStrSlashes + "/" + classRecord.className : classRecord.className;
-        let importStr:string = `import { ${classRecord.className} } from "./${classPath}";\n`;
-        let classPathKey = classRecord.packageName && classRecord.packageName != "" ? packageStrDelims + VARIABLE_DELIM + classRecord.className : classRecord.className;
-        //let varsStr:string = `\tpublic static ${variableStr}:any = ${classRecord.className};\n`;
-        let varsStr:string = `Library.classList["${classPathKey}"] = ${classRecord.className};\n`;
-        importsCont += importStr;
-        valueCont += varsStr;
+        if (classRecord.classKind == ClassKind.CLASS) {
+            let packageStrSlashes: string = classRecord.packageName.split(".").join("/");
+            let packageStrDelims: string = classRecord.packageName.split(".").join(VARIABLE_DELIM);
+            let classPath: string = classRecord.packageName && classRecord.packageName != "" ? packageStrSlashes + "/" + classRecord.className : classRecord.className;
+            let importStr: string = `import { ${classRecord.className} } from "./${classPath}";\n`;
+            let classPathKey = classRecord.packageName && classRecord.packageName != "" ? packageStrDelims + VARIABLE_DELIM + classRecord.className : classRecord.className;
+            //let varsStr:string = `\tpublic static ${variableStr}:any = ${classRecord.className};\n`;
+            let varsStr: string = `\t\tLibrary.classList["${classPathKey}"] = ${classRecord.className};\n`;
+            importsCont += importStr;
+            valueCont += varsStr;
+        }
     }
     result = importsCont;
     result += "\nexport default class Library {\n";
-    result += "\tpublic static classList:Array<any> = [];\n}\n";
+    //result += "\tpublic static classList:Array<any> = [];\n}\n";
+    result += "\tpublic static classList:Array<any> = [];\n";
+    result += "\tconstructor() {\n";
     result += valueCont;
+    result += "\n}\n}";
 
 
     return result;
