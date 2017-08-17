@@ -1906,13 +1906,15 @@ export function emitIdent(emitter:Emitter, node:Node):void {
 		emitter.ensureImportIdentifier(AS3_UTIL, `${pathToRoot}${AS3_UTIL}`);
 	}
 	emitter.catchup(node.start);
-	let staticClass:ClassRecord;
+	let staticRef:ClassRecord;
 	if (ClassList.isScanning == false)
 	{
-		staticClass = ClassList.checkStaticSuperOnCurrent(node.text);
-		if (staticClass)
+		staticRef = ClassList.checkIsStaticParentMamber(node.text);
+		//staticClass = ClassList.checkStaticThisOnCurrent(node.text);
+		if (staticRef)
 		{
-			console.log("$$$$$$$$$$$$$ Static " + node.text + "  " + staticClass.getFullPath());
+			//console.log("$$$$$$$$$$$$$ Static " + node.text + "  " + staticRef.getFullPath());
+			//emitter.ensureImportIdentifier("HHHHHIIIII");
 		}
 	}
 
@@ -1933,24 +1935,43 @@ export function emitIdent(emitter:Emitter, node:Node):void {
 	if (def && def.bound) {
 		emitter.insert(def.bound + '.');
 	}
+	if (staticRef){
+		emitter.ensureImportIdentifier(staticRef.className);
+		emitter.insert(staticRef.className + ".");
+	} else {
+		let isClassMember = ClassList.checkIsClassMember(node.text);
+		let IsSuperClassName = ClassList.checkIdentIsSuperClassName(node.text);
+/*		if (isClassMember)
+		{
+			if (ClassList.checkIsParentIdent(node.text) == false) {
+				if (emitter.emitThisForNextIdent) emitter.insert('this.');
 
-	if (!def &&
-		emitter.currentClassName &&
-		GLOBAL_NAMES.indexOf(node.text) === -1 &&
-		TYPE_REMAP[node.text] === undefined &&
-		node.text !== emitter.currentClassName
-	) {
-		if (node.text.match(/^[A-Z]/)) {
-			// Import missing identifier from this namespace
-			if (!emitter.options.useNamespaces) {
-				emitter.ensureImportIdentifier(node.text);
 			}
 
-		} else if (emitter.emitThisForNextIdent) {
-			// Identifier belongs to `this.` scope.
-			emitter.insert('this.');
+		}*/
+		if (!def &&
+			emitter.currentClassName &&
+			GLOBAL_NAMES.indexOf(node.text) === -1 &&
+			TYPE_REMAP[node.text] === undefined &&
+			node.text !== emitter.currentClassName
+		) {
+			if (node.text.match(/^[A-Z]/)) {
+				// Import missing identifier from this namespace
+				if (!emitter.options.useNamespaces) {
+					if (staticRef == undefined)
+					{
+						emitter.ensureImportIdentifier(node.text);
+					}
+
+				}
+
+			} else if (emitter.emitThisForNextIdent) {
+				// Identifier belongs to `this.` scope.
+				emitter.insert('this.');
+			}
 		}
 	}
+
 	// emitter.ensureImportIdentifier(node.text);
 
 	node.text = emitter.getIdentifierRemap(node.text) || node.text;

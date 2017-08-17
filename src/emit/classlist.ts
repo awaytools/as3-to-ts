@@ -20,8 +20,10 @@ export default class ClassList {
             let targetClassRecord = classes[i];
             if (targetClassRecord.className == classRecord.className && targetClassRecord.packageName == classRecord.packageName)
             {
-                console.log("setCurrent:" + classRecord.getFullPath());
+
                 ClassList.currentClassRecord = targetClassRecord;
+                let ext:string = targetClassRecord.extended ? targetClassRecord.extended.getFullPath() : "null";
+                //console.log("setCurrent:" + targetClassRecord.getFullPath() + " " + ext + "  " + targetClassRecord.extendsStr);
                 //ClassList.showMembers();
                 return
             }
@@ -96,19 +98,14 @@ export default class ClassList {
         if (ClassList.currentClassRecord)
         {
             let classRecord:ClassRecord = ClassList.currentClassRecord;
-            console.log("&&&&&&&&&CLass :" + classRecord.getFullPath());
-            console.log("VVVVVVVVVVVVVStaticsVVVVVVVVVV");
             console.log(classRecord.statics);
-            console.log("^^^^^^^^^^^^^^^^^^^^^^^^");
-            console.log("VVVVVVVVVVVVVchildrenVVVVVVVVVV");
             console.log(classRecord.children);
-            console.log("^^^^^^^^^^^^^^^^^^^^^^^^");
         }
     }
 
-    public static checkStaticSuperOnCurrent(ident:string):ClassRecord
+    public static checkStaticOnCurrent(ident:string):ClassRecord
     {
-        //if (ClassList.isScanning) return null;
+        if (ClassList.isScanning) return null;
 
         let classRecord:ClassRecord = ClassList.currentClassRecord;
         let staticClass:ClassRecord = classRecord;
@@ -124,20 +121,90 @@ export default class ClassList {
             }
         }while (staticClass = staticClass.extended)
 
-/*
-        while (parentRecord = parentRecord.extended)
+
+        return null
+    }
+
+    public static checkIsClassMember(ident:string):ClassRecord
+    {
+        if (ClassList.isScanning) return null;
+
+        let classRecord:ClassRecord = ClassList.currentClassRecord;
+        let currentInheritClass:ClassRecord = classRecord;
+        do {
+            let children:Array<ClassMember>  = currentInheritClass.children;
+            for (var i = 0; i < children.length; i++) {
+                let member:ClassMember = children[i];
+                if (member.identifier == ident)
+                {
+                    return currentInheritClass;
+                }
+
+            }
+        }while (currentInheritClass = currentInheritClass.extended)
+
+
+        return null
+    }
+    public static checkIdentIsSuperClassName(ident:string):boolean
+    {
+        if (ClassList.isScanning) return null;
+
+        let classRecord:ClassRecord = ClassList.currentClassRecord;
+        let currentInheritClass:ClassRecord = classRecord;
+        while (currentInheritClass = currentInheritClass.extended) {
+            if (currentInheritClass.className == ident) return true
+        }
+        return false
+    }
+
+    public static checkIsParentIdent(ident:string):boolean
+    {
+        if (ClassList.isScanning) return null;
+        let classRecord:ClassRecord = ClassList.currentClassRecord;
+        if (classRecord.extended && classRecord.extended.className == ident) return true;
+        return false
+    }
+
+    public static checkIsStaticParentMamber(ident:string):ClassRecord
+    {
+        if (ClassList.isScanning) return null;
+
+        let classRecord:ClassRecord = ClassList.currentClassRecord;
+        let staticClass:ClassRecord = classRecord;
+        while (staticClass = staticClass.extended)
         {
-            let staticMember:Array<ClassMember>  = parentRecord.statics;
+            let staticMember:Array<ClassMember>  = staticClass.statics;
             for (var i = 0; i < staticMember.length; i++) {
                 let member:ClassMember = staticMember[i];
                 if (member.identifier == ident)
                 {
-                    return parentRecord;
+                    return staticClass;
                 }
 
             }
         }
-*/
+
+
+        return null
+    }
+
+    public static checkStaticThisOnCurrent(ident:string):ClassRecord
+    {
+        if (ClassList.isScanning) return null;
+
+        let classRecord:ClassRecord = ClassList.currentClassRecord;
+        let staticMember:Array<ClassMember>  = classRecord.statics;
+        for (var i = 0; i < staticMember.length; i++) {
+            let member:ClassMember = staticMember[i];
+            if (member.identifier == ident)
+            {
+                return classRecord;
+            }
+
+        }
+
+
         return null
     }
 
@@ -146,6 +213,8 @@ export default class ClassList {
         let classes = ClassList.classList;
         for (var i = 0; i < classes.length; i++) {
             let classRecord:ClassRecord = <ClassRecord>classes[i];
+
+
             let extendStr:string = classRecord.extendsStr;
             if (extendStr && extendStr != "")
             {
@@ -222,7 +291,7 @@ export default class ClassList {
         }
         else
         {
-            console.log("*****************Warning. Class '" + classRecord.getFullPath() + "' implements unknown interface: " + classRecord.extendsStr);
+            console.log("***********Warning. Class '" + classRecord.getFullPath() + "' implements unknown interface: " + classRecord.extendsStr);
         }
     }
 
@@ -279,12 +348,12 @@ export default class ClassList {
 
         if (extendsRecord)
         {
-            classRecord.extended == extendsRecord;
-            //console.log("Extends" + classRecord.getFullPath() + "; " + extendsRecord.getFullPath());
+            classRecord.extended = extendsRecord;
+            //console.log("Extends : " + classRecord.getFullPath() + "; " + extendsRecord.getFullPath());
         }
         else
         {
-            //console.log("*****************Warning. Class '" + classRecord.getFullPath() + "' extends unknown class: " + classRecord.extendsStr);
+            console.log("**********Warning. Class '" + classRecord.getFullPath() + "' extends unknown class: " + classRecord.extendsStr);
         }
     }
 
@@ -335,11 +404,11 @@ export class ClassRecord
        return path
     }
 
-    public getRelativeFullPath(relativeTo:ClassRecord):string
+/*    public getRelativeFullPath(relativeTo:ClassRecord):string
     {
         let splitThis:Array<string> = this.packageName.split(".");
         let splitTarget:Array<string> = relativeTo.packageName.split(".");
-    }
+    }*/
 
 }
 
