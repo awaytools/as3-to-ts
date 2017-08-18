@@ -1826,7 +1826,11 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			emitter.insert(' instanceof ');
 
 			// Replace type with string comparison.
+
 			let typeRemapped = emitter.getTypeRemap(typeNode.text) || typeNode.text;
+			if (typeRemapped == "number") typeRemapped = "Number";
+			if (typeRemapped == "string") typeRemapped = "String";
+			if (typeRemapped == undefined) console.log("&&&&&&&&&&&&& UNDEFINED"  + typeRemapped);
 			emitter.insert(`${typeRemapped}`);
 			emitter.ensureImportIdentifier(typeRemapped);
 
@@ -1842,6 +1846,17 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			}*/
 			let children = node.children;
 			let leftIdent = children[0];
+			let castedStr:string;
+			let castedComplexNode:Node;
+			let arrayAccessorNode:Node;
+			if (leftIdent.kind == NodeKind.IDENTIFIER)
+			{
+				castedStr = leftIdent.text;
+			} else
+			{
+				castedComplexNode = leftIdent;
+			}
+
 			let middleNode = children[1];
 			let rightIdent = children[2];
 			//visitNode(emitter, leftIdent);
@@ -1849,18 +1864,32 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			let isInterface = ClassList.checkIsInterface(rightIdent.text);
 			if (isInterface)
 			{
-				emitter.insert(`${AS3_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
+				emitter.insert(`${AS3_UTIL}.${INTERFACE_METHOD}(`);
+				if (castedStr){
+					emitter.insert(castedStr);
+				} else if (castedComplexNode){
+					visitNode(emitter, castedComplexNode);
+					emitter.catchup(castedComplexNode.end);
+				}
+
+				emitter.insert (`, "${rightIdent.text}")`);
 
 				if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_CASTING_INTERFACE) == ReportFlags.EXT_AST_SHOW_CASTING_INTERFACE) {
-					console.log(">>>Class: " + ClassList.currentClassRecord.getFullPath() + "; ident: " + leftIdent.text + " casts "  + isInterface.getFullPath());
+					console.log(">>>Class: " + ClassList.currentClassRecord.getFullPath() + "; ident: " + castedStr + " casts "  + isInterface.getFullPath());
 				}
 			}
 			else
 			{
-				emitter.insert(`${leftIdent.text} instanceof ${rightIdent.text}`);
+				if (castedStr){
+					emitter.insert(castedStr);
+				}else if (castedComplexNode){
+
+					visitNode(emitter, castedComplexNode);
+					emitter.catchup(castedComplexNode.end);
+				}
+				emitter.insert(` instanceof ${rightIdent.text}`);
 			}
 
-			//emitter.insert(`${AS3_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
 			emitter.skipTo(node.end);
 			let pathToRoot = ClassList.getLastPathToRoot();
 			emitter.ensureImportIdentifier(AS3_UTIL, `${pathToRoot}${AS3_UTIL}`);

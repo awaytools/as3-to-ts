@@ -289,9 +289,12 @@ function convertSources(sourceFolder, destinationFolder, emitterOptions) {
         fs.outputFileSync(libraryFile, libContent);
     }
 
+
+
     fs.copySync("./node_modules/as3-to-ts/src/AS3Utils.ts",  destinationFolder.toString() + "/AS3Utils.ts");
-    fs.copySync("./node_modules/as3-to-ts/src/classBound.ts",  destinationFolder.toString() + "classBound.ts");
+    fs.copySync("./node_modules/as3-to-ts/src/classBound.ts",  destinationFolder.toString() + "/classBound.ts");
     fs.copySync("./node_modules/as3-to-ts/src/bound.ts",  destinationFolder.toString() + "/bound.ts");
+
 
 }
 

@@ -5,7 +5,7 @@ public class DebugClass extends MyClass implements MyInterface
 
     public function DebugClass()
     {
-        MyClass.myVar;
+        tTrolley.getChildAt(i) is Rectangle;
     }
 
 
