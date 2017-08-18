@@ -1850,6 +1850,10 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			if (isInterface)
 			{
 				emitter.insert(`${AS3_UTIL}.${INTERFACE_METHOD}(${leftIdent.text}, "${rightIdent.text}")`);
+
+				if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_CASTING_INTERFACE) == ReportFlags.EXT_AST_SHOW_CASTING_INTERFACE) {
+					console.log(">>>Class: " + ClassList.currentClassRecord.getFullPath() + "; ident: " + leftIdent.text + " casts "  + isInterface.getFullPath());
+				}
 			}
 			else
 			{
@@ -1922,12 +1926,16 @@ export function emitIdent(emitter:Emitter, node:Node):void {
 	if (ClassList.isScanning == false)
 	{
 		staticRef = ClassList.checkIsStaticParentMamber(node.text);
-		//staticClass = ClassList.checkStaticThisOnCurrent(node.text);
-		if (staticRef)
-		{
-			//console.log("$$$$$$$$$$$$$ Static " + node.text + "  " + staticRef.getFullPath());
-			//emitter.ensureImportIdentifier("HHHHHIIIII");
+		if (staticRef && (VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_PARENT_STATIC) == ReportFlags.EXT_AST_SHOW_PARENT_STATIC) {
+			console.log(">>> Static in parent: " + node.text + "  " + staticRef.getFullPath());
 		}
+		if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_ALL_STATIC) == ReportFlags.EXT_AST_SHOW_ALL_STATIC) {
+			let allStatic = ClassList.checkIsStatic(node.text);
+			if (allStatic) console.log(">>> Static ref: " + node.text + "  " + allStatic.getFullPath());
+
+		}
+
+
 	}
 
 	if (node.parent && node.parent.kind === NodeKind.DOT) {

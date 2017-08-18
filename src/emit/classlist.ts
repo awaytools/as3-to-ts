@@ -1,4 +1,5 @@
 import * as Keywords from '../syntax/keywords';
+import {VERBOSE_MASK} from "../config";
 //TODO Move from static to emmiterOptions
 //TODO Move from parser
 export default class ClassList {
@@ -23,8 +24,23 @@ export default class ClassList {
 
                 ClassList.currentClassRecord = targetClassRecord;
                 let ext:string = targetClassRecord.extended ? targetClassRecord.extended.getFullPath() : "null";
-                //console.log("setCurrent:" + targetClassRecord.getFullPath() + " " + ext + "  " + targetClassRecord.extendsStr);
-                //ClassList.showMembers();
+                if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_ALL_EXTENDS) == ReportFlags.EXT_AST_SHOW_ALL_EXTENDS) {
+                    if (targetClassRecord.extended)
+                    {
+                        console.log(">>>Class " + targetClassRecord.getFullPath() + " extends " + targetClassRecord.extended.getFullPath());
+                    }
+                }
+                if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_IMPLEMENTS) == ReportFlags.EXT_AST_SHOW_IMPLEMENTS) {
+                    if (targetClassRecord.interfaces.length > 0)
+                    {
+                        for (var j = 0; j < targetClassRecord.interfaces.length; j++) {
+                            var implementsRecord = targetClassRecord.interfaces[j];
+                            console.log("<<<Class " + targetClassRecord.getFullPath() + " implements " + implementsRecord.getFullPath());
+                        }
+
+                    }
+
+                }
                 return
             }
 
@@ -103,7 +119,7 @@ export default class ClassList {
         }
     }
 
-    public static checkStaticOnCurrent(ident:string):ClassRecord
+    public static checkIsStatic(ident:string):ClassRecord
     {
         if (ClassList.isScanning) return null;
 
@@ -268,6 +284,9 @@ export default class ClassList {
         }
 
         ClassList.isScanning = false;
+        if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_ALL_INTERFACES) == ReportFlags.EXT_AST_SHOW_ALL_INTERFACES) {
+            ClassList.showAllInterfaces()
+        }
     }
 
     public static visitInterfaces(classRecord:ClassRecord, interfaceStr:string):void  //TODO combine visitInterface and visitExtends in a one loop
@@ -442,7 +461,10 @@ export default class ClassList {
         }
         else
         {
-           // console.log("**********Warning. Class '" + classRecord.getFullPath() + "' extends unknown class: " + classRecord.extendsStr);
+
+            if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_ABSENTED_SUPERS) == ReportFlags.EXT_AST_SHOW_ABSENTED_SUPERS) {
+                console.log("****Warning. Class '" + classRecord.getFullPath() + "' extends unknown class: " + classRecord.extendsStr);
+            }
         }
     }
 
@@ -452,6 +474,7 @@ export default class ClassList {
             let classRecord:ClassRecord = <ClassRecord>classes[i];
             if (classRecord.classKind == ClassKind.INTERFACE)
             {
+                console.log(">>> Interface: " + classRecord.getFullPath());
             }
 
         }
