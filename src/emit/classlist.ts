@@ -141,6 +141,28 @@ export default class ClassList {
         return null
     }
 
+    public static checkIsStaticVariable(ident:string):ClassRecord
+    {
+        if (ClassList.isScanning) return null;
+
+        let classRecord:ClassRecord = ClassList.currentClassRecord;
+        let staticClass:ClassRecord = classRecord;
+        do {
+            let staticMember:Array<ClassMember>  = staticClass.statics;
+            for (var i = 0; i < staticMember.length; i++) {
+                let member:ClassMember = staticMember[i];
+                if (member.identifier == ident && member.kind == ClassMemberKind.VARIABLE)
+                {
+                    return staticClass;
+                }
+
+            }
+        }while (staticClass = staticClass.extended)
+
+
+        return null
+    }
+
     public static checkIsClassMember(ident:string):ClassRecord
     {
         if (ClassList.isScanning) return null;

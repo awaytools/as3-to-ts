@@ -18,7 +18,7 @@ const enum ReportFlags {
     EXT_AST_SHOW_ALL_STATIC         = 8192,
     EXT_AST_SHOW_PARENT_STATIC	    = 16384,
     EXT_AST_SHOW_CASTING_INTERFACE	= 32768,
-    FLAG_17     	       = 65536,
+    EXT_AST_SHOW_STATIC_VARIABLE 	  = 65536,
     SCANNER_POINTS	    = 131072,
     SCANNER_DETAILS	    = 262144,
     FLAG_20	            = 524288,

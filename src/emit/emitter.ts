@@ -1934,6 +1934,11 @@ export function emitIdent(emitter:Emitter, node:Node):void {
 			if (allStatic) console.log(">>> Static ref: " + node.text + "  " + allStatic.getFullPath());
 
 		}
+		if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_STATIC_VARIABLE) == ReportFlags.EXT_AST_SHOW_STATIC_VARIABLE) {
+			let staticVariable = ClassList.checkIsStaticVariable(node.text);
+			if (staticVariable) console.log(">>> Static variable: " + node.text + "  " + staticVariable.getFullPath());
+
+		}
 
 
 	}
