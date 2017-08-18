@@ -1881,13 +1881,15 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			}
 			else
 			{
-				if (castedStr){
+/*				if (castedStr){
 					emitter.insert(castedStr);
 				}else if (castedComplexNode){
 
 					visitNode(emitter, castedComplexNode);
 					emitter.catchup(castedComplexNode.end);
-				}
+				}*/
+				visitNode(emitter, leftIdent);
+				emitter.catchup(leftIdent.end);
 				emitter.insert(` instanceof ${rightIdent.text}`);
 			}
 

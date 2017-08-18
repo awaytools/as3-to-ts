@@ -5,16 +5,10 @@ public class DebugClass extends MyClass implements MyInterface
 
     public function DebugClass()
     {
-        tTrolley.getChildAt(i) is Rectangle;
+        addChild(new tMainClass() as DisplayObject);
     }
 
 
 }
 
 }
-/*
-sdgsdg
-
-sdg
-sdgsdgsd
- */
