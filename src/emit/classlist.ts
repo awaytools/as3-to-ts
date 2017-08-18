@@ -462,7 +462,7 @@ export default class ClassList {
         else
         {
 
-            if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_ABSENTED_SUPERS) == ReportFlags.EXT_AST_SHOW_ABSENTED_SUPERS) {
+            if ((VERBOSE_MASK & ReportFlags.EXT_AST_SHOW_MISSED_SUPERS) == ReportFlags.EXT_AST_SHOW_MISSED_SUPERS) {
                 console.log("****Warning. Class '" + classRecord.getFullPath() + "' extends unknown class: " + classRecord.extendsStr);
             }
         }
