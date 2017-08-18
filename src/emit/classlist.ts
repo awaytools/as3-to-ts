@@ -49,24 +49,23 @@ export default class ClassList {
     }
 
     public static getLastPathToRoot():string{
-       let classRecord:ClassRecord = ClassList.classList[ClassList.classList.length - 1];
+        if (ClassList.isScanning) return;
+        //let classRecord: ClassRecord = ClassList.classList[ClassList.classList.length - 1];
+        let classRecord: ClassRecord = ClassList.currentClassRecord;
 
-       let packages = classRecord.packageName.split(".");
-       let packageLevel:number = 0
-       if (packages.length < 2) {
-           if (packages[0].length > 0) {
-               packageLevel = 1;
-           } else {
-               packageLevel = 0;
-           }
-       } else	{
-           packageLevel = packages.length;
-       }
-       let path = packageLevel == 0 ? "./" : "" ;
-       for (var i = 0; i < packageLevel; i++) {
-           path += "../";
-       }
-       return path
+        let packageLevel: number = 0;
+        if (classRecord && classRecord.packageName && classRecord.packageName != "") {
+            let packages  = classRecord.packageName.split(".");
+            packageLevel = packages.length;
+        }
+        else {
+            packageLevel = 0;
+        }
+        let path = packageLevel == 0 ? "./" : "";
+        for (var i = 0; i < packageLevel; i++) {
+            path += "../";
+        }
+        return path
     }
 
     public static addClassMemberToLast(classMember:ClassMember):void{
