@@ -12,4 +12,9 @@ public class DebugClass extends MyClass implements MyInterface
 }
 
 }
+/*
+sdgsdg
 
+sdg
+sdgsdgsd
+ */

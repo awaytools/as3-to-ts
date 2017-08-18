@@ -142,6 +142,7 @@ export function visitNode(emitter:Emitter, node:Node):void {
 			emitter.catchup(node.start);
 			visitNodes(emitter, node.children);
 		};
+
 	//if(VERBOSE >= 2 && VISITORS[node.kind]) {
 	if ((VERBOSE_MASK & ReportFlags.NODES_TREE) == ReportFlags.NODES_TREE && VISITORS[node.kind]) {
 		console.log("visit:" + VISITORS[node.kind].name + "() <=====================================");
@@ -215,7 +216,7 @@ export default class Emitter {
 		this.withScope([], (rootScope) => {
 			this.rootScope = rootScope;
 			visitNode(this, filterAST(ast));
-			this.catchup(this.source.length - 1);
+			this.catchup(this.source.length);
 		});
 		this.output = this.output.replace(/\s([^\n])\s*?=>/gm, " =>");//TODO hotfix. To remove new lines between arrow operator nad {
 		return this.headOutput + this.output;
