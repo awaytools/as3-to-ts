@@ -1180,8 +1180,8 @@ function storeClassMember(node:Node):void
 			//if (mode.text == Keywords.PUBLIC || )
 		});
 	}
-	let nameNode;
-	let typeNode;
+	let nameNode:Node;
+	let typeNode:Node;
 
 	switch (node.kind) {
 		case NodeKind.SET:

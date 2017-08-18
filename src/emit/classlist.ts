@@ -531,14 +531,14 @@ export class ClassRecord
     public packageName      :string;
     public className        :string;
     public classKind        :number = ClassKind.CLASS;
-    public extendsStr?      :string;
-    public extended?        :ClassRecord;//will be defined in optimize method
+    public extendsStr       :string;
+    public extended         :ClassRecord;//will be defined in optimize method
     //public implemented?     :ClassRecord;
     public children         :Array<ClassMember> = [];
     public statics          :Array<ClassMember> = [];
     public interfaces       :Array<ClassRecord> = [];
     public interfacesStrs   :Array<string> = [];
-    public imports?         :Array<string> = [];
+    public imports         :Array<string> = [];
     constructor(packageName:string, className:string){
         this.packageName = packageName;
         this.className = className;
