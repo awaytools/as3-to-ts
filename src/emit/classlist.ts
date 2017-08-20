@@ -620,18 +620,15 @@ export function getUsedClasses():string {
             let importStr: string = `import { ${classRecord.className} } from "./${classPath}";\n`;
             let classPathKey = classRecord.packageName && classRecord.packageName != "" ? packageStrDelims + VARIABLE_DELIM + classRecord.className : classRecord.className;
             //let varsStr:string = `\tpublic static ${variableStr}:any = ${classRecord.className};\n`;
-            let varsStr: string = `\t\tLibrary.classList["${classPathKey}"] = ${classRecord.className};\n`;
+            let varsStr: string = `\tLibrary.classList["${classPathKey}"] = ${classRecord.className};\n`;
             importsCont += importStr;
             valueCont += varsStr;
         }
     }
     result = importsCont;
     result += "\nexport default class Library {\n";
-    //result += "\tpublic static classList:Array<any> = [];\n}\n";
-    result += "\tpublic static classList:Array<any> = [];\n";
-    result += "\tconstructor() {\n";
+    result += "\tpublic static classList:Array<any> = [];\n}\n";
     result += valueCont;
-    result += "\n}\n}";
 
 
     return result;
