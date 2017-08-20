@@ -1812,7 +1812,7 @@ function emitRelation(emitter:Emitter, node:Node):void {
 
 			// Insert 'typeof' before instance name.
 			emitter.catchup(node.start);
-			//emitter.insert('typeof ');
+			emitter.insert('typeof ');
 			// Emit variable name.
 			visitNode(emitter, varNode);
 
@@ -1823,16 +1823,16 @@ function emitRelation(emitter:Emitter, node:Node):void {
 
 			emitter.skipTo(varNode.end);
 			// Emit equality check.
-			//emitter.insert(' === ');
-			emitter.insert(' instanceof ');
+			emitter.insert(' === ');
+			//emitter.insert(' instanceof ');
 
 			// Replace type with string comparison.
 
 			let typeRemapped = emitter.getTypeRemap(typeNode.text) || typeNode.text;
-			if (typeRemapped == "number") typeRemapped = "Number";
-			if (typeRemapped == "string") typeRemapped = "String";
+			//if (typeRemapped == "number") typeRemapped = "Number";
+			//if (typeRemapped == "string") typeRemapped = "String";
 			if (typeRemapped == undefined) console.log("&&&&&&&&&&&&& UNDEFINED"  + typeRemapped);
-			emitter.insert(`${typeRemapped}`);
+			emitter.insert(`'${typeRemapped}'`);
 			emitter.ensureImportIdentifier(typeRemapped);
 
 			// Skip the rest... 'is Number/String/Boolean'
