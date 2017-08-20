@@ -1803,7 +1803,8 @@ function emitRelation(emitter:Emitter, node:Node):void {
 		// Determine if the check is against a primitive or a custom type.
 		// console.log(node.toString());
 		var isPrimitiveCheck:boolean = containsPrimitiveIdentifier(node);
-		if (isPrimitiveCheck) {
+		var isClassCheck:boolean = containsClassIdentifier(node);
+		if (isPrimitiveCheck || isClassCheck) {
 
 			// Identify players.
 			var varNode = node.children[0];
@@ -1831,9 +1832,9 @@ function emitRelation(emitter:Emitter, node:Node):void {
 			let typeRemapped = emitter.getTypeRemap(typeNode.text) || typeNode.text;
 			//if (typeRemapped == "number") typeRemapped = "Number";
 			//if (typeRemapped == "string") typeRemapped = "String";
-			if (typeRemapped == undefined) console.log("&&&&&&&&&&&&& UNDEFINED"  + typeRemapped);
+			if (isClassCheck) typeRemapped = "function";
 			emitter.insert(`'${typeRemapped}'`);
-			emitter.ensureImportIdentifier(typeRemapped);
+			if (isClassCheck == false) emitter.ensureImportIdentifier(typeRemapped);
 
 			// Skip the rest... 'is Number/String/Boolean'
 			emitter.skipTo(node.end);
@@ -1888,6 +1889,14 @@ function emitRelation(emitter:Emitter, node:Node):void {
 					visitNode(emitter, castedComplexNode);
 					emitter.catchup(castedComplexNode.end);
 				}*/
+
+				if (rightIdent.text === 'Class'){
+
+				}
+				else
+				{
+
+				}
 				visitNode(emitter, leftIdent);
 				emitter.catchup(leftIdent.end);
 				emitter.insert(` instanceof ${rightIdent.text}`);
@@ -1919,6 +1928,17 @@ function containsPrimitiveIdentifier(node:Node) {
 		var child:Node = node.children[i];
 		if (child.kind == NodeKind.IDENTIFIER) {
 			if (child.text === 'Number' || child.text === 'String' || child.text === 'Boolean') {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+function containsClassIdentifier(node:Node) {
+	for (var i:number = 0; i < node.children.length; i++) {
+		var child:Node = node.children[i];
+		if (child.kind == NodeKind.IDENTIFIER) {
+			if (child.text === 'Class') {
 				return true;
 			}
 		}
