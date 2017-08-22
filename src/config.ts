@@ -3,6 +3,7 @@
 export const VERBOSE_MASK = ReportFlags.LOG_NOTHING;
 export const WARNINGS = 0; // 0 none, 1 some, 2 a lot, 3 everything
 export const FOR_IN_KEY = '__$nflvKey';
+export const FOR_IN_OBJ = '__$nflvObject';
 export const INTERFACE_INF = '__interfaces__';
 export const AS3_UTIL = 'AS3Utils';
 export const INTERFACE_METHOD = 'isInstanceOfInterface';

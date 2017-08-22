@@ -3,7 +3,7 @@ import * as Keywords from '../syntax/keywords';
 import Node, {createNode} from '../syntax/node';
 import assign = require('object-assign')
 import {CustomVisitor} from "../custom-visitors"
-import {VERBOSE_MASK, AS3_UTIL, INTERFACE_METHOD, INTERFACE_INF, WARNINGS, FOR_IN_KEY, INDENT} from '../config';
+import {VERBOSE_MASK, AS3_UTIL, INTERFACE_METHOD, INTERFACE_INF, WARNINGS, FOR_IN_KEY, FOR_IN_OBJ, INDENT} from '../config';
 import ClassList, {ClassKind, ClassMember, ClassMemberKind, ClassRecord, ModifierKind, MODIFIERS} from "./classlist";
 
 const util = require('util');
@@ -877,6 +877,12 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	let objNode = inNode.children[0];
 	let blockNode = node.children[2];
 
+	if (objNode.kind == NodeKind.ARRAY)
+	{
+		emitter.catchup(node.start);
+		emitter.insert(`\tvar ${FOR_IN_OBJ};\n\t\t`);
+	}
+
 	let nameTypeInitNode = varNode.findChild(NodeKind.NAME_TYPE_INIT);
 	let nameNode:Node;
 	let typeNode:Node;
@@ -911,6 +917,10 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	emitter.catchup(inNode.start);
 	emitter.insert(' ');
 
+	if (objNode.kind == NodeKind.ARRAY) {
+		emitter.catchup(objNode.start);
+		emitter.insert(` ${FOR_IN_OBJ} = `);
+	}
 	visitNodes(emitter, inNode.children);
 	emitter.catchup(blockNode.start + 1);
 
@@ -944,7 +954,7 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	 }*/
 	var obj_name = objNode.text;
 	if (objNode.kind == NodeKind.ARRAY) {
-		console.log("WARNING: code should not iterate over inline-defined arrays!!!!")
+		//console.log("WARNING: code should not iterate over inline-defined arrays!!!!")
 		obj_name = "[";
 		for (var i = 0; i < objNode.children.length; i++) {
 			obj_name += objNode.children[i].text;
@@ -953,7 +963,8 @@ function emitForEach(emitter:Emitter, node:Node):void {
 			}
 		}
 		obj_name += "]";
-		emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } =${ castStr }  ${ obj_name }[${ FOR_IN_KEY }];\n`);
+		//obj_name =
+		emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } =${ castStr }  ${ FOR_IN_OBJ }[${ FOR_IN_KEY }];\n`);
 
 	}
 	else{
