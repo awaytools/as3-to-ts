@@ -1,16 +1,13 @@
 package
 {
-public class DebugClass extends MyClass implements MyInterface
-{
-    public function DebugClass()
-    {
-            for each (var tPathString:String in tArray[1]) {
+public class DebugClass {
+    public var prop1,prop2,prop3: Number;
 
-            }
-        }
+    public function DebugClass() {
+
+        trace(prop2);
     }
 
 
-
-
+}
 }

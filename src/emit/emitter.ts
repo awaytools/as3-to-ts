@@ -175,6 +175,7 @@ export default class Emitter {
 	public isNew:boolean = false;
 	public isExtended:boolean = false;
 	public skipNewLines:boolean = false;
+	public loopObjectCounter:number = 0;
 
 	private _emitThisForNextIdent:boolean = true;
 	get emitThisForNextIdent():boolean {
@@ -884,7 +885,8 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	if (objNode.kind == NodeKind.ARRAY)
 	{
 		emitter.catchup(node.start);
-		emitter.insert(`\tvar ${FOR_IN_OBJ};\n\t\t`);
+		emitter.loopObjectCounter++;
+		emitter.insert(`\tvar ${FOR_IN_OBJ}${emitter.loopObjectCounter};\n\t\t`);
 	}
 
 	let nameTypeInitNode = varNode.findChild(NodeKind.NAME_TYPE_INIT);
@@ -924,7 +926,7 @@ function emitForEach(emitter:Emitter, node:Node):void {
 
 	if (objNode.kind == NodeKind.ARRAY) {
 		emitter.catchup(objNode.start);
-		emitter.insert(` ${FOR_IN_OBJ} = `);
+		emitter.insert(` ${FOR_IN_OBJ}${emitter.loopObjectCounter} = `);
 	}
 	visitNodes(emitter, inNode.children);
 	emitter.catchup(blockNode.start + 1);
@@ -959,10 +961,11 @@ function emitForEach(emitter:Emitter, node:Node):void {
 
 	 console.log("node", node);
 	 }*/
+
 	var obj_name = objNode.text;
 	if (objNode.kind == NodeKind.ARRAY) {
-		//TODO check nested objects
-		emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } =${ castStr }  ${ FOR_IN_OBJ }[${ FOR_IN_KEY }];\n`);
+		//TODO check nested object
+		emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } =${ castStr }  ${ FOR_IN_OBJ }${emitter.loopObjectCounter}[${ FOR_IN_KEY }];\n`);
 
 	}
 	else{
