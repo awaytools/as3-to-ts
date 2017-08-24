@@ -916,6 +916,7 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	emitter.skip(4); // "each"
 	emitter.catchup(varNode.start);
 	emitter.insert(`var ${FOR_IN_KEY}`);
+	emitter.declareInScope({name:FOR_IN_KEY});
 	emitter.skipTo(varNode.end);
 
 	emitter.catchup(inNode.start);
@@ -935,6 +936,8 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	let declarationWord:string = "";
 	if (nameTypeInitNode) {
 		declarationWord = "var ";
+		//emitter.declareInScope({name:nameNode.text});
+
 	}
 	else {
 		if (def) {
@@ -958,16 +961,7 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	 }*/
 	var obj_name = objNode.text;
 	if (objNode.kind == NodeKind.ARRAY) {
-		//console.log("WARNING: code should not iterate over inline-defined arrays!!!!")
-		obj_name = "[";
-		for (var i = 0; i < objNode.children.length; i++) {
-			obj_name += objNode.children[i].text;
-			if(i!=objNode.children.length-1){
-				obj_name+=",";
-			}
-		}
-		obj_name += "]";
-		//obj_name =
+		//TODO check nested objects
 		emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } =${ castStr }  ${ FOR_IN_OBJ }[${ FOR_IN_KEY }];\n`);
 
 	}
@@ -976,18 +970,16 @@ function emitForEach(emitter:Emitter, node:Node):void {
 		if (objNode.children.length > 0 && obj_name == undefined) {
 			obj_name = getNodeNameRecursive(objNode);
 		}
-		var firstObjName=obj_name.split(".")[0];
-		let def2 = emitter.findDefInScope(firstObjName);
-		let declarationWord2:string = "this.";
-		if (def2) {
-			if (def2.bound) {
-				declarationWord2 = def2.bound + ".";
-			}
-			else {
-				declarationWord2 = "";
-			}
-		}
-		emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } = ${ castStr } ${declarationWord2}${ obj_name }[${ FOR_IN_KEY }];\n`);
+
+		emitter.insert(`\n\t\t\t${ declarationWord }${ nameNode.text }${ typeStr } = ${ castStr }`);
+		let lastIndex:number = emitter.getIndex();
+		let inNodeChild = inNode.children[0];
+		emitter.skipTo(inNode.start);
+		emitter.consume("in", inNodeChild.start);
+		visitNode(emitter, inNode);
+		emitter.catchup(inNode.end);
+		emitter.skipTo(lastIndex);
+		emitter.insert (`[${ FOR_IN_KEY }];\n`);
 
 	}
 
