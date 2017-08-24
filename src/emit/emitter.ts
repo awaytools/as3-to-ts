@@ -323,6 +323,10 @@ export default class Emitter {
 		this.index = index;
 	}
 
+	getIndex():number {
+		return this.index;
+	}
+
 	skip(number:number):void {
 		this.index += number;
 	}
@@ -990,6 +994,7 @@ function emitForEach(emitter:Emitter, node:Node):void {
 	visitNode(emitter, blockNode);
 
 }
+
 function getNodeNameRecursive(objNode:Node):string{
 	var obj_name = objNode.text;
 	if(obj_name != undefined)

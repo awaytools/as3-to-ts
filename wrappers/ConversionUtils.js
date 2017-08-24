@@ -256,6 +256,9 @@ function convertSources(sourceFolder, destinationFolder, emitterOptions) {
 
     // Convert.
     let content = fs.readFileSync(inputFile, 'UTF-8');
+    if (content.charCodeAt(0) === 0xFEFF) {
+        content = content.substr(1);
+    }
     let ast;
     try { ast = parse(path.basename(file), content); }
     catch(err) { console.log(err); }
