@@ -8,6 +8,7 @@
   },
   "scripts": {
     "rimraf": "rimraf",
+    "typings": "typings install",
     "pretest": "npm run -s build",
     "test": "npm run pretest && npm run test:simple && npm run test:compound",
     "test:simple": "node tests/simple/SimpleTests.js",
