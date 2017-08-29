@@ -51,7 +51,11 @@
     "sax": "~0.6.0"
   },
   "devDependencies": {
+    "colors": "^1.1.2",
     "diff": "^2.2.1",
+    "fs-extra": "^0.24.0",
+    "object-assign": "^4.1.1",
+    "sax": "^0.6.1",
     "source-map-support": "^0.3.2",
     "tslint": "^2.5.1",
     "typescript": "^1.5.3",
