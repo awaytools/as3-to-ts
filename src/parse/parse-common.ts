@@ -8,6 +8,7 @@ import {MULTIPLE_LINES_COMMENT} from './parser';
 import {parseStatement} from './parse-statements';
 import {parseExpression} from './parse-expressions';
 import {parseOptionalType} from './parse-types';
+import {ReportFlags} from '../reports/report-flags';
 
 
 export function parseQualifiedName(parser:AS3Parser, skipPackage:boolean):string {

@@ -7,6 +7,7 @@ import {parseParameterList, parseBlock} from './parse-common';
 import {parseOptionalType, parseVector} from './parse-types';
 import {parseArrayLiteral, parseObjectLiteral, parseShortVector} from './parse-literals';
 import {VERBOSE_MASK} from '../config';
+import {ReportFlags} from '../reports/report-flags';
 
 export function parseExpressionList(parser:AS3Parser):Node {
     let result:Node = createNode(NodeKind.EXPR_LIST, {start: parser.tok.index}, parseAssignmentExpression(parser));

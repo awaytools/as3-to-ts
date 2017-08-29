@@ -5,6 +5,7 @@ import assign = require('object-assign')
 import {CustomVisitor} from "../custom-visitors"
 import {VERBOSE_MASK, AS3_UTIL, INTERFACE_METHOD, INTERFACE_INF, WARNINGS, FOR_IN_KEY, FOR_IN_OBJ, INDENT} from '../config';
 import ClassList, {ClassKind, ClassMember, ClassMemberKind, ClassRecord, ModifierKind, MODIFIERS} from "./classlist";
+import {ReportFlags} from '../reports/report-flags';
 
 const util = require('util');
 

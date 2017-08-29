@@ -37,7 +37,7 @@ import {startsWith, endsWith} from '../string';
 
 import sax = require('sax');
 import objectAssign = require('object-assign');
-
+import {ReportFlags} from '../reports/report-flags';
 
 export interface CheckPoint {
     index: number;

@@ -1,7 +1,7 @@
 /*
 export let NODE = '.<';
 export let XOR_EQUAL = '^=';*/
-const enum ReportFlags {
+export const enum ReportFlags {
     KEY_POINTS	        = 1,
     TRANSPILED_CODE	    = 2,
     NODES_TREE	        = 4,

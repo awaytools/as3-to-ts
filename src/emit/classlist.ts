@@ -1,5 +1,6 @@
 import * as Keywords from '../syntax/keywords';
 import {VERBOSE_MASK} from "../config";
+import {ReportFlags} from '../reports/report-flags';
 //TODO Move from static to emmiterOptions
 //TODO Move from parser
 export default class ClassList {

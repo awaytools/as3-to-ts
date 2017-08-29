@@ -10,6 +10,7 @@ import {ASDOC_COMMENT, MULTIPLE_LINES_COMMENT} from './parser';
 import {VERBOSE_MASK} from '../config';
 import {parseExpression} from './parse-expressions';
 import {parseOptionalType} from './parse-types';
+import {ReportFlags} from '../reports/report-flags';
 
 /**
  * tok is empty, since nextToken has not been called before

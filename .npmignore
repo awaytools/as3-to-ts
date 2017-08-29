@@ -1,5 +1,15 @@
 # Copy of .gitignore, except for build output and default .npmignored
+/typings
+
+# default .npmignore
+/node_modules
+npm-debug.log
+
+# I'm an IntelliJ duder
 /.idea
+# But i've played with VSCode
 /.vscode
-/test/fixtures/generated
-/test/single
+
+# Tests
+/tests/simple/js-generated
+/tests/compound/js-generated

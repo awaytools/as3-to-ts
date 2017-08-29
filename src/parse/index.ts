@@ -4,6 +4,7 @@ import SourceFile from './source-file';
 import AS3Scanner from './scanner';
 import {parseCompilationUnit} from './parse-declarations';
 import {VERBOSE_MASK, WARNINGS} from '../config';
+import {ReportFlags} from '../reports/report-flags';
 
 export default function parse(filePath:string, content:string):Node {
 

@@ -12,11 +12,5 @@ npm-debug.log
 /.vscode
 
 # Tests
-/test/fixtures/generated
-/test/generated
-/test/single
-/test-ast/fixtures/generated
-/test-ast/generated
-/test-ast/single
 /tests/simple/js-generated
 /tests/compound/js-generated

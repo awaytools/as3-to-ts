@@ -1,6 +1,7 @@
 import NodeKind, {nodeKindName} from './nodeKind';
 import Token from '../parse/token';
 import {VERBOSE_MASK} from '../config';
+import {ReportFlags} from '../reports/report-flags';
 
 interface CreateNodeOptions {
     start?: number;
