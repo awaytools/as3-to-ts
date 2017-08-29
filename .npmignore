@@ -1,5 +1,4 @@
 # Copy of .gitignore, except for build output and default .npmignored
-/typings
 
 # default .npmignore
 /node_modules
