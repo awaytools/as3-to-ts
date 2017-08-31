@@ -3,11 +3,11 @@ import { classBound } from "undefinedclassBound";
 
 @classBound
 export class DebugClass {
-    public prop1,prop2,prop3: number;
+    //public var prop1,prop2,prop3: Number;
 
     constructor(){
 
-        console.log(prop2);
+        var obj = {nSize: [-1.7, 2]};
     }
 
 

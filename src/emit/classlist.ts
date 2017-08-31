@@ -184,6 +184,29 @@ export default class ClassList {
 
         return null
     }
+
+    public static getClassMember(ident:string):ClassMember
+    {
+        if (ClassList.isScanning) return null;
+
+        let classRecord:ClassRecord = ClassList.currentClassRecord;
+        let currentInheritClass:ClassRecord = classRecord;
+        do {
+            let children:Array<ClassMember>  = currentInheritClass.children;
+            for (var i = 0; i < children.length; i++) {
+                let member:ClassMember = children[i];
+                if (member.identifier == ident)
+                {
+                    return member;
+                }
+
+            }
+        }while (currentInheritClass = currentInheritClass.extended)
+
+
+        return null
+    }
+
     public static checkIdentIsSuperClassName(ident:string):boolean
     {
         if (ClassList.isScanning) return null;

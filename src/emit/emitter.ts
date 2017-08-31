@@ -114,6 +114,7 @@ const VISITORS:{[kind:number]:NodeVisitor} = {
 	[NodeKind.LITERAL]: emitLiteral,
 	[NodeKind.ARRAY]: emitArray,
 	[NodeKind.BLOCK]: emitBlock,
+	[NodeKind.MINUS]: emitMinus,
 	//[NodeKind.PARAMETER_LIST]: emitParametersList
 };
 
@@ -271,6 +272,7 @@ export default class Emitter {
 			this.scope.declarations.push(declaration);
 		}
 	}
+
 
 	findDefInScope(text:string):Declaration {
 		let scope = this.scope;
@@ -1037,6 +1039,10 @@ function getNodeNameRecursive(objNode:Node):string{
 function emitBlock(emitter:Emitter, node:Node):void {
 	visitNodes(emitter, node.children);
 }
+function emitMinus(emitter:Emitter, node:Node):void {
+	emitter.insert("-");
+	visitNodes(emitter, node.children);
+}
 
 function getClassDeclarations(emitter:Emitter, className:string, contentsNode:Node[]):Declaration[] {
 	let found:{ [name:string]:boolean } = {};
@@ -1196,6 +1202,8 @@ function storeClassMember(node:Node):void
 	let nameNode:Node;
 	let typeNode:Node;
 
+	let namesInitList;
+
 	switch (node.kind) {
 		case NodeKind.SET:
 		case NodeKind.GET:
@@ -1206,17 +1214,39 @@ function storeClassMember(node:Node):void
 		case NodeKind.VAR_LIST:
 		case NodeKind.CONST_LIST:
 			let nameInitNode = node.findChild(NodeKind.NAME_TYPE_INIT);
+			namesInitList = node.findChildren(NodeKind.NAME_TYPE_INIT);
 			if (nameInitNode)
 			{
 				nameNode = nameInitNode.findChild(NodeKind.NAME);
 				typeNode = nameInitNode.findChild(NodeKind.TYPE);
-
-
 			}
 			break;
 		default:
 			return;
 	}
+	if (namesInitList && namesInitList.length > 1)
+	{
+
+		for (var i = 0; i < namesInitList.length; i++) {
+			let nameInitNode = namesInitList[i]
+			if (nameInitNode)
+			{
+				nameNode = nameInitNode.findChild(NodeKind.NAME);
+				typeNode = nameInitNode.findChild(NodeKind.TYPE);
+				processClassMember(node, nameNode, typeNode, nsModifier, isStatic, isOverridden);
+			}
+		}
+	}
+	else
+	{
+		processClassMember(node, nameNode, typeNode, nsModifier, isStatic, isOverridden);
+	}
+
+
+}
+
+function processClassMember(node:Node, nameNode:Node, typeNode:Node, nsModifier:number, isStatic:boolean, isOverridden:boolean):void
+{
 	let classMemberKind:number = 0;
 	switch (node.kind) {
 		case NodeKind.SET:
@@ -1509,13 +1539,29 @@ function containsSuperCall(node:Node):boolean {
 
 function emitPropertyDecl(emitter:Emitter, node:Node, isConst = false):void {
 	emitClassField(emitter, node);
-	let names = node.findChildren(NodeKind.NAME_TYPE_INIT)
-	names.forEach((name, i) => {
-		if (i === 0) {
-			emitter.consume(isConst ? Keywords.CONST : Keywords.VAR, name.start);
-		}
-		visitNode(emitter, name);
-	})
+	let names = node.findChildren(NodeKind.NAME_TYPE_INIT);
+	if (names.length > 1)
+	{
+		names.forEach((name, i) => {
+			emitClassField(emitter, node);
+			if (i === 0) {
+				emitter.consume(isConst ? Keywords.CONST : Keywords.VAR, name.start);
+			}
+			visitNode(emitter, name);
+			emitter.catchup(name.start);
+		})
+	}
+	else
+	{
+		names.forEach((name, i) => {
+			if (i === 0) {
+				emitter.consume(isConst ? Keywords.CONST : Keywords.VAR, name.start);
+			}
+			visitNode(emitter, name);
+		})
+	}
+
+
 }
 
 

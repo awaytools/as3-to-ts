@@ -115,4 +115,5 @@ export default class Node {
     get lastChild(): Node {
         return this.children[this.children.length - 1];
     }
+
 }
