@@ -7,7 +7,8 @@ export class DebugClass {
 
     constructor(){
 
-        var obj = {nSize: [-1.7, 2]};
+        var a = -1;
+        var obj = {nSize: [[-1.8], -2]};
     }
 
 

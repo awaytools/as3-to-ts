@@ -358,6 +358,14 @@ export default class Emitter {
 		}
 		this.index = index;
 	}
+	consumeRegExp(reg:RegExp, limit:number):void {
+		let matches = this.source.slice(this.index).match(reg);
+		if (matches.length < 1) return
+		let matchStr = matches[0];
+		let index = this.source.indexOf(matchStr, this.index) + matchStr.length;
+		if (index > limit || index < this.index) return
+		this.index = index;
+	}
 
 	/**
 	 * Utilities
@@ -414,9 +422,6 @@ export default class Emitter {
 		}
 		return IDENTIFIER_REMAP[text];
 	}
-
-
-
 
 }
 
@@ -1040,7 +1045,7 @@ function emitBlock(emitter:Emitter, node:Node):void {
 	visitNodes(emitter, node.children);
 }
 function emitMinus(emitter:Emitter, node:Node):void {
-	emitter.insert("-");
+	//emitter.insert("-");
 	visitNodes(emitter, node.children);
 }
 
@@ -2164,7 +2169,10 @@ function emitArray(emitter:Emitter, node:Node):void {
 	emitter.catchup(node.start);
 	emitter.insert('[');
 	if (node.children.length > 0) {
-		emitter.skipTo(node.children[0].start);
+		//emitter.skipTo(node.children[0].start);
+		emitter.skip(1);
+		//emitter.consume("\n", node.children[0].start);
+		emitter.consumeRegExp(/\s+(?=\W)/m, node.children[0].start);
 		visitNodes(emitter, node.children);
 		emitter.catchup(node.lastChild.end);
 	}
