@@ -57,18 +57,31 @@ const IDENTIFIER_REMAP:{ [id:string]:string } = {
 	'getDefinitionByName': 'AS3Utils.getDefinitionByName'
 }
 
-interface Scope {
+/*interface Scope {
 	parent:Scope;
 	declarations:Declaration[];
 	className?:string;
+}*/
+
+class Scope {
+	public parent:Scope;
+	public declarations:Declaration[];
+	public className?:string;
 }
 
+class Declaration {
+	public name:string;
+	public type?:string;
+	public bound?:string;
+}
 
+/*
 interface Declaration {
 	name:string;
 	type?:string;
 	bound?:string;
 }
+*/
 
 
 export interface EmitterOptions {
@@ -196,8 +209,28 @@ export default class Emitter {
 	public output:string = '';
 	public index:number = 0;
 
-	public rootScope:Scope = null;
-	public scope:Scope = null;
+/*	public rootScope:Scope = null;
+	public scope:Scope = null;*/
+
+	get scope(): Scope {
+		return this._scope;
+	}
+
+	set scope(value: Scope) {
+		this._scope = value;
+	}
+	private _scope:Scope;
+
+	get rootScope(): Scope {
+		return this._rootScope;
+	}
+
+	set rootScope(value: Scope) {
+		this._rootScope = value;
+	}
+
+	private _rootScope:Scope;
+
 
 	constructor(source:string, options?:EmitterOptions) {
 		this.source = source;
@@ -317,6 +350,10 @@ export default class Emitter {
 		let text = this.sourceBetween(this.index, index);
 		this.index = index;
 		this.insert(text);
+	}
+	setIndexPos(index:number):void {
+		this.index = index;
+
 	}
 
 	sourceBetween(start:number, end:number) {
@@ -1052,6 +1089,65 @@ function emitMinus(emitter:Emitter, node:Node):void {
 function getClassDeclarations(emitter:Emitter, className:string, contentsNode:Node[]):Declaration[] {
 	let found:{ [name:string]:boolean } = {};
 
+	let resultDeclarations:Declaration[] = [];
+	contentsNode.forEach(node => {
+
+		//let nameNode:Node;
+		let nameNodeList:Node[];
+
+		switch (node.kind) {
+			case NodeKind.SET:
+			case NodeKind.GET:
+			case NodeKind.FUNCTION:
+				//nameNode = node.findChild(NodeKind.NAME);
+				nameNodeList = node.findChildren(NodeKind.NAME);
+				break;
+			case NodeKind.VAR_LIST:
+			case NodeKind.CONST_LIST:
+				//nameNode = node.findChild(NodeKind.NAME_TYPE_INIT).findChild(NodeKind.NAME);
+				nameNodeList = node.findChildren(NodeKind.NAME_TYPE_INIT)
+				break;
+			default:
+				break;
+		}
+		if (!nameNodeList || nameNodeList.length == 0)
+		{
+			return null;
+		}
+		let modList = node.findChild(NodeKind.MOD_LIST);
+		let isStatic = modList && modList.children.some(mod => mod.text === 'static');
+
+		nameNodeList.forEach(nodeInit =>{
+				let nameNode:Node = nodeInit.kind == NodeKind.NAME_TYPE_INIT ? nodeInit.findChild(NodeKind.NAME) : nodeInit;
+				let typeNode:Node = nodeInit.kind == NodeKind.NAME_TYPE_INIT ? nodeInit : node.findChild(NodeKind.NAME_TYPE_INIT);
+				if (!nameNode || found[nameNode.text]) {
+					return null;
+				}
+				found[nameNode.text] = true;
+				if (nameNode.text === className) {
+					return;
+				}
+
+				let declaration = <Declaration>{
+					name: nameNode.text,
+					type: getDeclarationType(emitter, typeNode),
+					bound: isStatic ? className : 'this'
+				};
+				resultDeclarations.push(declaration);
+			}
+
+		)
+
+
+
+	})
+	resultDeclarations = resultDeclarations.filter(el => !!el);
+	return resultDeclarations;
+}
+/*
+function getClassDeclarations(emitter:Emitter, className:string, contentsNode:Node[]):Declaration[] {
+	let found:{ [name:string]:boolean } = {};
+
 	return contentsNode.map(node => {
 		let nameNode:Node;
 
@@ -1064,6 +1160,7 @@ function getClassDeclarations(emitter:Emitter, className:string, contentsNode:No
 			case NodeKind.VAR_LIST:
 			case NodeKind.CONST_LIST:
 				nameNode = node.findChild(NodeKind.NAME_TYPE_INIT).findChild(NodeKind.NAME);
+				//nameNodeList
 				break;
 			default:
 				break;
@@ -1085,6 +1182,7 @@ function getClassDeclarations(emitter:Emitter, className:string, contentsNode:No
 		};
 	}).filter(el => !!el);
 }
+*/
 
 
 function emitClass(emitter:Emitter, node:Node):void {
@@ -1543,26 +1641,59 @@ function containsSuperCall(node:Node):boolean {
 
 
 function emitPropertyDecl(emitter:Emitter, node:Node, isConst = false):void {
-	emitClassField(emitter, node);
+
 	let names = node.findChildren(NodeKind.NAME_TYPE_INIT);
 	if (names.length > 1)
 	{
-		names.forEach((name, i) => {
+		//emitter.insert("<prop:>");
+		let typeNode:Node;
+		let typeStr:string;
+		let lastNameNode = names[names.length -1];
+		let type = lastNameNode.findChild(NodeKind.TYPE);
+		if (type.text != "") typeNode = type;
+		typeStr = typeNode ? `:${typeNode.text}` : "";
+
+		let mods = node.findChild(NodeKind.MOD_LIST);
+		let start = node.start;
+		names.forEach((nameTypeInit, i) => {
 			emitClassField(emitter, node);
-			if (i === 0) {
-				emitter.consume(isConst ? Keywords.CONST : Keywords.VAR, name.start);
+			emitter.consume(isConst ? Keywords.CONST : Keywords.VAR, nameTypeInit.start);
+			//visitNode(emitter, name);
+
+
+			emitter.declareInScope({
+				name: nameTypeInit.findChild(NodeKind.NAME).text,
+				type: getDeclarationType(emitter, node)
+			});
+			//emitter.catchup(nameTypeInit.start);
+			let nameNode:Node = nameTypeInit.children[0];
+			//let typeNode:Node = nameTypeInit.children[1];
+			//visitNodes(emitter, nameTypeInit.children);
+			//emitter.index
+
+			emitter.insert(` ${nameNode.text}`);
+			if (typeNode)
+			{
+				emitter.insert(":");
+				emitter.skipTo(typeNode.start);
+				visitNode(emitter, typeNode);
+				emitter.insert(";\n\t");
 			}
-			visitNode(emitter, name);
-			emitter.catchup(name.start);
+
+			//emitter.insert(`${typeStr};\n\t`);
+			emitter.setIndexPos(start);
 		})
+		//emitter.insert("</prop:>");
+		emitter.skipTo(node.nextSibling.start);
 	}
 	else
 	{
-		names.forEach((name, i) => {
+		emitClassField(emitter, node);
+		names.forEach((nameTypeInit, i) => {
 			if (i === 0) {
-				emitter.consume(isConst ? Keywords.CONST : Keywords.VAR, name.start);
+				emitter.consume(isConst ? Keywords.CONST : Keywords.VAR, nameTypeInit.start);
 			}
-			visitNode(emitter, name);
+			visitNode(emitter, nameTypeInit);
 		})
 	}
 
