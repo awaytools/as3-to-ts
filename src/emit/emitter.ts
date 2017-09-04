@@ -57,31 +57,31 @@ const IDENTIFIER_REMAP:{ [id:string]:string } = {
 	'getDefinitionByName': 'AS3Utils.getDefinitionByName'
 }
 
-/*interface Scope {
+interface Scope {
 	parent:Scope;
 	declarations:Declaration[];
 	className?:string;
-}*/
+}
 
-class Scope {
+/*class Scope {
 	public parent:Scope;
 	public declarations:Declaration[];
-	public className?:string;
+	public className:string;
 }
 
 class Declaration {
 	public name:string;
-	public type?:string;
-	public bound?:string;
-}
+	public type:string;
+	public bound:string;
+}*/
 
-/*
+
 interface Declaration {
 	name:string;
 	type?:string;
 	bound?:string;
 }
-*/
+
 
 
 export interface EmitterOptions {
@@ -1305,7 +1305,7 @@ function storeClassMember(node:Node):void
 	let nameNode:Node;
 	let typeNode:Node;
 
-	let namesInitList;
+	let namesInitList:Node[];
 
 	switch (node.kind) {
 		case NodeKind.SET:
