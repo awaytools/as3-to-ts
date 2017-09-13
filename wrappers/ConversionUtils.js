@@ -294,13 +294,10 @@ function convertSources(sourceFolder, destinationFolder, emitterOptions) {
 
 
 
-/*    fs.copySync("./node_modules/@as3web/as3-to-ts/utils/AS3Utils.ts",  destinationFolder.toString() + "/AS3Utils.ts");
+    fs.copySync("./node_modules/@as3web/as3-to-ts/utils/AS3Utils.ts",  destinationFolder.toString() + "/AS3Utils.ts");
     fs.copySync("./node_modules/@as3web/as3-to-ts/utils/classBound.ts",  destinationFolder.toString() + "/classBound.ts");
-    fs.copySync("./node_modules/@as3web/as3-to-ts/utils/bound.ts",  destinationFolder.toString() + "/bound.ts");*/
+    fs.copySync("./node_modules/@as3web/as3-to-ts/utils/bound.ts",  destinationFolder.toString() + "/bound.ts");
 
-    fs.copySync("./node_modules/as3-to-ts/utils/AS3Utils.ts",  destinationFolder.toString() + "/AS3Utils.ts");
-    fs.copySync("./node_modules/as3-to-ts/utils/classBound.ts",  destinationFolder.toString() + "/classBound.ts");
-    fs.copySync("./node_modules/as3-to-ts/utils/bound.ts",  destinationFolder.toString() + "/bound.ts");
 
 
 }
