@@ -4,8 +4,6 @@
 # default .npmignore
 /node_modules
 npm-debug.log
-# default .npmignore
-package-lock.json
 
 # I'm an IntelliJ duder
 /.idea
