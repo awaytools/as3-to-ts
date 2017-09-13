@@ -5,8 +5,7 @@
     "target": "es6",
     "module": "commonjs",
     "sourceMap": true,
-    "noImplicitAny": true,
-    "watch": true
+    "noImplicitAny": true
   },
   "exclude": [
     "node_modules",
