@@ -41,11 +41,11 @@ export function parseStatement(parser:AS3Parser):Node {
         result = parseThrowStatement(parser);
     } else if (tokIs(parser, Keywords.BREAK) || tokIs(parser, Keywords.CONTINUE)) {
         result = parseBreakOrContinueStatement(parser);
-    } else if (tokIs(parser, Operators.SEMI_COLUMN)) {
+    } else if (tokIs(parser, Operators.SEMICOLON)) {
         result = parseEmptyStatement(parser);
     } else {
         result = parseExpressionList(parser);
-        skip(parser, Operators.SEMI_COLUMN);
+        skip(parser, Operators.SEMICOLON);
     }
     return result;
 }
@@ -95,7 +95,7 @@ function parseTraditionalFor(parser:AS3Parser, index:number):Node {
     consume(parser, Operators.LEFT_PARENTHESIS);
 
     let result:Node = createNode(NodeKind.FOR, {start: index});
-    if (!tokIs(parser, Operators.SEMI_COLUMN)) {
+    if (!tokIs(parser, Operators.SEMICOLON)) {
         if (tokIs(parser, Keywords.VAR)) {
             let varList = parseVarList(parser, null, null);
             result.children.push(createNode(NodeKind.INIT, {start: varList.start, end: varList.end}, varList));
@@ -109,12 +109,12 @@ function parseTraditionalFor(parser:AS3Parser, index:number):Node {
             return parseForIn(parser, result);
         }
     }
-    consume(parser, Operators.SEMI_COLUMN);
-    if (!tokIs(parser, Operators.SEMI_COLUMN)) {
+    consume(parser, Operators.SEMICOLON);
+    if (!tokIs(parser, Operators.SEMICOLON)) {
         let expr = parseExpression(parser);
         result.children.push(createNode(NodeKind.COND, {start: expr.start, end: expr.end}, expr));
     }
-    consume(parser, Operators.SEMI_COLUMN);
+    consume(parser, Operators.SEMICOLON);
     if (!tokIs(parser, Operators.RIGHT_PARENTHESIS)) {
         let expr = parseExpressionList(parser);
         result.children.push(createNode(NodeKind.ITER, {start: expr.start, end: expr.end}, expr));
@@ -218,7 +218,7 @@ function parseDo(parser:AS3Parser):Node {
     let cond = parseCondition(parser);
     result.children.push(cond);
     result.end = cond.end;
-    if (tokIs(parser, Operators.SEMI_COLUMN)) {
+    if (tokIs(parser, Operators.SEMICOLON)) {
         nextToken(parser, true);
     }
     return result;
@@ -281,14 +281,14 @@ function parseFinally(parser:AS3Parser):Node {
 function parseVar(parser:AS3Parser):Node {
     let result:Node;
     result = parseVarList(parser, null, null);
-    skip(parser, Operators.SEMI_COLUMN);
+    skip(parser, Operators.SEMICOLON);
     return result;
 }
 
 
 function parseConst(parser:AS3Parser):Node {
     let result = parseConstList(parser, null, null);
-    skip(parser, Operators.SEMI_COLUMN);
+    skip(parser, Operators.SEMICOLON);
     return result;
 }
 
@@ -299,13 +299,13 @@ function parseReturnStatement(parser:AS3Parser):Node {
     let index = parser.tok.index,
         end = parser.tok.end;
     nextTokenAllowNewLine(parser);
-    if (tokIs(parser, NEW_LINE) || tokIs(parser, Operators.SEMI_COLUMN)) {
+    if (tokIs(parser, NEW_LINE) || tokIs(parser, Operators.SEMICOLON)) {
         nextToken(parser, true);
         result = createNode(NodeKind.RETURN, {start: index, end: end});
     } else {
         let expr = parseExpression(parser);
         result = createNode(NodeKind.RETURN, {start: index, end: expr.end}, expr);
-        skip(parser, Operators.SEMI_COLUMN);
+        skip(parser, Operators.SEMICOLON);
     }
     return result;
 }
@@ -334,7 +334,7 @@ function parseBreakOrContinueStatement(parser:AS3Parser):Node {
         );
     }
     let result:Node;
-    if (tokIs(parser, NEW_LINE) || tokIs(parser, Operators.SEMI_COLUMN)) {
+    if (tokIs(parser, NEW_LINE) || tokIs(parser, Operators.SEMICOLON)) {
         nextToken(parser, true);
         result = createNode(kind, {start: tok.index, end: tok.end});
     } else {
@@ -355,7 +355,7 @@ function parseBreakOrContinueStatement(parser:AS3Parser):Node {
         }
         result = createNode(kind, {start: tok.index, end: ident.end}, ident);
     }
-    skip(parser, Operators.SEMI_COLUMN);
+    skip(parser, Operators.SEMICOLON);
     return result;
 }
 

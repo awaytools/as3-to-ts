@@ -44,7 +44,7 @@ export let REST_PARAMETERS = '...';
 export let RIGHT_CURLY_BRACKET = '}';
 export let RIGHT_PARENTHESIS = ')';
 export let RIGHT_SQUARE_BRACKET = ']';
-export let SEMI_COLUMN = ';';
+export let SEMICOLON = ';';
 export let SIMPLE_QUOTE = '\'';
 export let SLASH = '/';
 export let STRICTLY_EQUAL = '===';

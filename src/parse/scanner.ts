@@ -496,7 +496,7 @@ function scanUntilDelimiter(scanner: AS3Scanner, start: string, delimiter: strin
             return null;
         }
         buffer += currentCharacter;
-        if ((currentCharacter === delimiter  && numberOfBackslashes == 0) ) {
+        if ((currentCharacter === delimiter  && numberOfBackslashes === 0) ) {
             let result = new Token(buffer, scanner.index);
             scanner.skipChars(buffer.toString().length - 1);
             return result;
