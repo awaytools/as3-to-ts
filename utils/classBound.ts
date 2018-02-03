@@ -27,7 +27,11 @@ export function classBound(target: any) {
 
     f.prototype = original.prototype;
 
-    for (var p in original) if (original.hasOwnProperty(p)) f[p] = original[p];
+    for (var p in original) {
+        if (original.hasOwnProperty(p)) {
+            f[p] = original[p];
+        }
+    }
 
     return f;
 }
