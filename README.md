@@ -33,6 +33,8 @@ Make sure you have [Node v6+](https://nodejs.org/) installed.
 
 You should have `as3-to-ts` now globaly available in your commandline.
 
+If you want to run the test suite using `npm test`, run `npm link @as3web/as3-to-ts` in the as3-to-ts folder. 
+
 ## Usage
 
 ```
