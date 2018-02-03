@@ -50,9 +50,10 @@ export default class ClassList {
     }
 
     public static getLastPathToRoot():string{
-        if (ClassList.isScanning) return;
-        //let classRecord: ClassRecord = ClassList.classList[ClassList.classList.length - 1];
         let classRecord: ClassRecord = ClassList.currentClassRecord;
+        if(!classRecord) {
+            classRecord = ClassList.classList[ClassList.classList.length - 1];
+        }
 
         let packageLevel: number = 0;
         if (classRecord && classRecord.packageName && classRecord.packageName != "") {
