@@ -1191,7 +1191,10 @@ function emitClass(emitter:Emitter, node:Node):void {
 	let mods = node.findChild(NodeKind.MOD_LIST);
 	if (mods && mods.children.length) {
 		emitter.catchup(mods.start);
-		emitter.insert("\n@classBound\n");
+
+		// insert @classBound with equal indentation for the next line
+		emitter.output = emitter.output.replace(/([^\S\n]*)$/, "$1@classBound\n$1"); 
+
 		let insertExport = false;
 		mods.children.forEach(node => {
 			if (node.text !== 'private') {
@@ -1441,16 +1444,20 @@ function emitMethod(emitter:Emitter, node:Node):void {
 	if (node.kind !== NodeKind.FUNCTION || name.text !== emitter.currentClassName) {
 		let pathToRoot = ClassList.getLastPathToRoot();
 		emitter.ensureImportIdentifier("bound", `${pathToRoot}bound`);
+
 		let mods = node.findChild(NodeKind.MOD_LIST);
-		if (mods)
+		if (mods) {
 			emitter.catchup(mods.start);
-		else
+		} else {
 			emitter.catchup(name.start);
-		emitter.insert("@bound\n");
+		}
+
+		// insert @bound with equal indentation for the next line
+		emitter.output = emitter.output.replace(/([^\S\n]*)$/, "$1@bound\n$1");
+
 		emitClassField(emitter, node);
-		emitter.consume('function', name.start);
+
 		emitter.catchup(name.end);
-		//emitter.insert(" = ");
 
 	} else {
 		let mods = node.findChild(NodeKind.MOD_LIST);
