@@ -1,3 +1,5 @@
+import { bound } from "../../bound";
+import { classBound } from "../../classBound";
 /**
  * Created by palebluedot on 3/24/17.
  */
@@ -5,24 +7,27 @@
 
 import { Thing } from "./Base/Thing";
 
+@classBound
 export class Engine extends Thing {
 
     private _timeStarted:number = -1;
 
     constructor(){
-		super();
         super();
     }
 
-    public start = ():void =>  {
+    @bound
+    public start():void {
         this._timeStarted = Date.now();
     }
 
-    public stop = ():void =>  {
+    @bound
+    public stop():void {
         this._timeStarted = -1;
     }
 
-    public getRunningTime = ():number =>  {
+    @bound
+    public getRunningTime():number {
         if(this._timeStarted == -1) {
             return 0;
         }

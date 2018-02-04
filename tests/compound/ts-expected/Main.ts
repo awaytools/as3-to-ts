@@ -1,4 +1,6 @@
+import { bound } from "./bound";
 import { AwayDate } from "@as3web/flash";
+import { classBound } from "./classBound";
 
 import { Sprite } from "@as3web/flash"
 import { StageAlign } from "@as3web/flash"
@@ -9,19 +11,19 @@ import { URLRequest } from "@as3web/flash"
 
 import {Vehicle} from "./vehicles/Vehicle";
 
+@classBound
 export class Main extends Sprite {
 
-    public doYourThing = (spr:Sprite):void =>  {
+    @bound
+    public doYourThing(spr:Sprite):void {
     console.log("snippets are cool");
 }
-
 
     private thing1:string = "heya";
     private thing2:string = "oops, forgot the semi :O"
     public noAccessDeclDefaultsToInternal:string;
 
     constructor(){
-		super();
         super();
 
         this.earlyDrop();
@@ -69,7 +71,8 @@ export class Main extends Sprite {
         var date:AwayDate = new AwayDate();
     }
 
-    public earlyDrop = (something:boolean):void =>  {
+    @bound
+    public earlyDrop(something:boolean):void {
         if(something == false) {
             return;
         }
