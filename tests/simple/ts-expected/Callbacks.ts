@@ -1,3 +1,6 @@
+import { bound } from "./bound";
+import { classBound } from "./classBound";
+@classBound
 export class Callbacks {
 
     public a:string = "a"
@@ -13,15 +16,17 @@ export class Callbacks {
         });
     }
 
-    private callback = ():void =>  {
+    @bound
+    private callback():void {
         console.log("(class callback) this is: " + this);
         if(this) { console.log("a is: " + this.a) }
         else { console.log("a is: unknown") }
     }
 
-    private executeCallback = (callback:Function):void =>  {
+    @bound
+    private executeCallback(callback:Function):void {
         callback();
     }
 }
 
-new Callbacks()
+new Callbacks();

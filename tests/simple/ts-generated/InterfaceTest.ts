@@ -1,5 +1,7 @@
-import { bound } from "as3-to-ts/src/bound";
+import { classBound } from "./classBound";
+import { bound } from "./bound";
 
+@classBound
 export class InterfaceTest
 {
 	constructor(){
@@ -14,11 +16,10 @@ interface myInterface{
 }
 
 class MyClass implements myInterface{
-	static __interfaces__;
+	static __interfaces__ = ["myInterface"];
 @bound
 public myFunc(value:number):number
 	{
 		return 10
 	}
 }
-MyClass.__interfaces__ = ["myInterface"];

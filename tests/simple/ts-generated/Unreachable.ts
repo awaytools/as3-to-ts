@@ -1,13 +1,15 @@
-import { bound } from "as3-to-ts/src/bound";
+import { bound } from "./bound";
+import { classBound } from "./classBound";
 /**
  * Created by palebluedot on 5/3/17.
  */
+@classBound
 export class Unreachable {
     constructor(){
         this.demonstrate();
     }
     @bound
-public demonstrate():number {
+    public demonstrate():number {
 
         var tPow:number = 1;
         var tExp:number = 1;

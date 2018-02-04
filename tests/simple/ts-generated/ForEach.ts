@@ -1,6 +1,9 @@
+import { classBound } from "./classBound";
 /**
  * Created by palebluedot on 4/24/17.
  */
+
+@classBound
 export class ForEach {
     constructor(){
 
@@ -44,4 +47,4 @@ export class ForEach {
 //     }
 // }
 
-new ForEach()
+new ForEach();

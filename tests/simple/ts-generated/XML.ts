@@ -1,10 +1,12 @@
 import { XML, XMLList } from "@as3web/flash";
+import { classBound } from "./classBound";
+@classBound
 export class XML {
 
   constructor(){
 
     var sport:XML =
-      "<sport>\n        <name isCool='yes'>Basketball</name>\n        <players>men</players>\n        <players>women</players>\n        <nationalTV>NBC</nationalTV>\n        <nationalTV>ESPN</nationalTV>\n      </sport>";
+      "<sport>\r\n        <name isCool='yes'>Basketball</name>\r\n        <players>men</players>\r\n        <players>women</players>\r\n        <nationalTV>NBC</nationalTV>\r\n        <nationalTV>ESPN</nationalTV>\r\n      </sport>";
 
     sport.name["isCool"] = '→';
 

@@ -1,6 +1,8 @@
 import { MyClass } from "./MyClass";
-import { bound } from "as3-to-ts/src/bound";
+import { bound } from "./bound";
+import { classBound } from "./classBound";
 
+@classBound
 export class SuperHoistingTest extends MyClass
 {
 	constructor(){
@@ -9,7 +11,7 @@ export class SuperHoistingTest extends MyClass
 	}
 
 	@bound
-/*override*/ protected myFunc(value:number):number
+	/*override*/ protected myFunc(value:number):number
 	{
 		return super.myFunc(value) * 3;
 	}
@@ -33,7 +35,7 @@ class MyClass{
 		this.myVar2 = 13;
 	}
 	@bound
-protected myFunc(value:number):number
+	protected myFunc(value:number):number
 	{
 		return value * 10;
 	}

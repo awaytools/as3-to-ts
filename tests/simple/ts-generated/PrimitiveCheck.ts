@@ -1,4 +1,6 @@
-import { AS3Utils } from "as3-to-ts/src/AS3Utils";
+import { AS3Utils } from "./AS3Utils";
+import { classBound } from "./classBound";
+@classBound
 export class PrimitiveCheck {
 
   constructor(){
@@ -7,7 +9,7 @@ export class PrimitiveCheck {
     if(typeof myVar === 'number')     { console.log("it's a number"); }
     if(typeof myVar === 'string')  { console.log("it's a string"); }
     if(typeof myVar === 'boolean') { console.log("it's a boolean"); }
-    if(AS3Utils.isInstanceOfInterface(myVar, "Object"))  { console.log("it's an object"); }
+    if(myVar instanceof Object)  { console.log("it's an object"); }
 
     /*
     Expected TS:

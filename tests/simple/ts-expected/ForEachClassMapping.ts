@@ -1,5 +1,8 @@
 import { MappedClass } from "./MappedClass";
+import { classBound } from "./classBound";
+import { bound } from "./bound";
 
+@classBound
 export class ForEachClassMapping
 {
 	constructor(){
@@ -12,7 +15,7 @@ export class ForEachClassMapping
 		myObj.c = c;
 		for  (var __$nflvKey  in myObj)
 		{
-			var value:MappedClass = myObj[__$nflvKey];
+			var value:MappedClass = <MappedClass> myObj[__$nflvKey];
 
 			console.log(value);
 		}
@@ -29,7 +32,8 @@ class MappedClass
 		this.value = value;
 	}
 
-	public toString = ():string => 
+	@bound
+	public toString():string
 	{
 		return this.value;
 	}

@@ -1,3 +1,5 @@
+import { classBound } from "./classBound";
+@classBound
 export class SuperArray extends Array {
 
   constructor(...args){

@@ -1,4 +1,7 @@
-import { bound } from "as3-to-ts/src/bound";
+import { bound } from "./bound";
+import { classBound } from "./classBound";
+
+@classBound
 export class Being {
     public name:string;
     private _happiness:string;
@@ -6,7 +9,7 @@ export class Being {
         this.doSetHappiness(value);
     }
     @bound
-public doSetHappiness(value:string):void {
+    public doSetHappiness(value:string):void {
         this._happiness = value;
     }
     constructor(){
@@ -14,28 +17,30 @@ public doSetHappiness(value:string):void {
         this.happiness = "low";
     }
     @bound
-public be():void {
+    public be():void {
         console.log(this.name + " is - hapiness: " + this._happiness);
     }
 }
 
+@classBound
 export class Animal extends Being {
     constructor(){
         super();
         this.name = "animal";
     }
     @bound
-public move():void {
+    public move():void {
         console.log(this.name + ", an animal, moved");
         this.breathe();
     }
     @bound
-protected breathe():void {
+    protected breathe():void {
         console.log(this.name + ", an animal, breathed");
         this.be();
     }
 }
 
+@classBound
 export class Snake extends Animal {
     constructor(){
         super();
@@ -46,7 +51,7 @@ export class Snake extends Animal {
         this.breathe();
     }
     @bound
-/*override*/ public move():void {
+    /*override*/ public move():void {
         this.happiness = "high";
         super.move();
     }
