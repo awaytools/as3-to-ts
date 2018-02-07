@@ -107,7 +107,7 @@ function parseImport(parser:AS3Parser):Node {
     let tok = consume(parser, Keywords.IMPORT);
     let name = parseImportName(parser);
     let result:Node = createNode(NodeKind.IMPORT, {start: tok.index, text: name});
-    skip(parser, Operators.SEMI_COLUMN);
+    skip(parser, Operators.SEMICOLON);
     //if(VERBOSE >= 2) {
     if((VERBOSE_MASK & ReportFlags.PARSER_IMPORTS) == ReportFlags.PARSER_IMPORTS) {
         console.log("parse-declarations.ts - parseImport() - name: " + name + ", line: " + parser.scn.lastLineScanned);
@@ -145,7 +145,7 @@ function parseUse(parser:AS3Parser):Node {
         end: nameIndex + namespace.length,
         text: namespace
     });
-    skip(parser, Operators.SEMI_COLUMN);
+    skip(parser, Operators.SEMICOLON);
     return result;
 }
 
@@ -271,7 +271,7 @@ function parseClassContent(parser:AS3Parser):Node {
         if (tokIs(parser, Operators.LEFT_CURLY_BRACKET)) {
             result.children.push(parseBlock(parser));
         }
-        if (tokIs(parser, Operators.LEFT_SQUARE_BRACKET)) {
+        else if (tokIs(parser, Operators.LEFT_SQUARE_BRACKET)) {
             meta.push(parseMetaData(parser));
         } else if (tokIs(parser, Keywords.VAR)) {
             parseClassField(parser, result, modifiers, meta);
@@ -305,7 +305,7 @@ function parseClassField(parser:AS3Parser, result:Node, modifiers:Token[], meta:
         result.children.push(parser.currentMultiLineComment);
         parser.currentMultiLineComment = null;
     }
-    if (tokIs(parser, Operators.SEMI_COLUMN)) {
+    if (tokIs(parser, Operators.SEMICOLON)) {
         nextToken(parser);
     }
     meta.length = 0;
@@ -315,7 +315,7 @@ function parseClassField(parser:AS3Parser, result:Node, modifiers:Token[], meta:
 
 function parseClassConstant(parser:AS3Parser, result:Node, modifiers:Token[], meta:Node[]):void {
     result.children.push(parseConstList(parser, meta, modifiers));
-    if (tokIs(parser, Operators.SEMI_COLUMN)) {
+    if (tokIs(parser, Operators.SEMICOLON)) {
         nextToken(parser);
     }
     meta.length = 0;
@@ -431,8 +431,8 @@ function parseFunction(parser:AS3Parser, meta:Node[], modifiers:Token[]):Node {
     result.children.push(params);
     result.children.push(returnType);
 
-    if (tokIs(parser, Operators.SEMI_COLUMN)) {
-        consume(parser, Operators.SEMI_COLUMN);
+    if (tokIs(parser, Operators.SEMICOLON)) {
+        consume(parser, Operators.SEMICOLON);
     } else {
         result.children.push(parseFunctionBlock(parser));
     }
@@ -449,7 +449,7 @@ function parseFunction(parser:AS3Parser, meta:Node[], modifiers:Token[]):Node {
 
 function parseFunctionSignature(parser:AS3Parser):Node {
     let {type, name, params, returnType} = doParseSignature(parser);
-    skip(parser, Operators.SEMI_COLUMN);
+    skip(parser, Operators.SEMICOLON);
     let result:Node = createNode(
         type.kind,
         {start: type.start, end: -1, text: type.text},
