@@ -271,7 +271,7 @@ function parseClassContent(parser:AS3Parser):Node {
         if (tokIs(parser, Operators.LEFT_CURLY_BRACKET)) {
             result.children.push(parseBlock(parser));
         }
-        if (tokIs(parser, Operators.LEFT_SQUARE_BRACKET)) {
+        else if (tokIs(parser, Operators.LEFT_SQUARE_BRACKET)) {
             meta.push(parseMetaData(parser));
         } else if (tokIs(parser, Keywords.VAR)) {
             parseClassField(parser, result, modifiers, meta);
