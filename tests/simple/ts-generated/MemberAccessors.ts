@@ -1,4 +1,6 @@
-import { bound } from "as3-to-ts/src/bound";
+import { bound } from "./bound";
+import { classBound } from "./classBound";
+@classBound
 export class Accessors {
 
     public memberVar:string = "hello";
@@ -8,7 +10,7 @@ export class Accessors {
     }
 
     @bound
-public memberMethod():void {
+    public memberMethod():void {
         console.log(this.memberVar);
 
         var a:string = "a";

@@ -1,4 +1,7 @@
+import { classBound } from "./classBound";
+import { bound } from "./bound";
 
+@classBound
 export class InterfaceTest
 {
 	constructor(){
@@ -9,14 +12,14 @@ export class InterfaceTest
 
 
 interface myInterface{
-	myFunc(value:number):number
+	myFunc(value:Number):number
 }
 
 class MyClass implements myInterface{
-	static __interfaces__;
-public myFunc = (value:number):number => 
+	static __interfaces__ = ["myInterface"];
+@bound
+public myFunc(value:number):number
 	{
 		return 10
 	}
 }
-MyClass.__interfaces__ = ["myInterface"];

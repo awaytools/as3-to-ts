@@ -14,4 +14,7 @@ npm-debug.log
 
 # Tests
 /tests/simple/js-generated
+/tests/simple/ts-generated
 /tests/compound/js-generated
+/tests/compound/ts-generated
+/tests/compound/as3-tmp

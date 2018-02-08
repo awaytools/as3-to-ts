@@ -1,3 +1,6 @@
+import { bound } from "./bound";
+import { classBound } from "./classBound";
+@classBound
 export class Accessors {
 
     public memberVar:string = "hello";
@@ -6,7 +9,8 @@ export class Accessors {
         this.memberMethod();
     }
 
-    public memberMethod = ():void =>  {
+    @bound
+    public memberMethod():void {
         console.log(this.memberVar);
 
         var a:string = "a";

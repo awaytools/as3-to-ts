@@ -1,5 +1,4 @@
-import { classBound } from "undefinedclassBound";
-
+import { classBound } from "./classBound";
 
 @classBound
 export class DebugClass {

@@ -96,7 +96,7 @@ filesAS.forEach(file => {
     }
   }
   else {
-    console.log(colors.red('  ✗ ERROR: unable to find reference file to compare to.'));
+    //console.log(colors.red('  ✗ ERROR: unable to find reference file to compare to.'));
   }
 });
 

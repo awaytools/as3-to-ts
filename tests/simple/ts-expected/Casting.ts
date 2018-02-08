@@ -1,3 +1,6 @@
+import { bound } from "./bound";
+import { classBound } from "./classBound";
+@classBound
 export class Casting {
 
     constructor(){
@@ -34,9 +37,10 @@ export class Casting {
 
     }
 
-    private thisMethodIsInTheClassScope = (str:string) => {
+    @bound
+    private thisMethodIsInTheClassScope(str:string) {
         console.log(str);
     }
 }
 
-new Casting()
+new Casting();

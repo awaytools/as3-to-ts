@@ -1,4 +1,6 @@
+import { classBound } from "./classBound";
 
+@classBound
 export class ClassMember
 {
 	public myVar:number = 100;

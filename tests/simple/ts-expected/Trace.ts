@@ -1,4 +1,6 @@
- export class Trace  {
+import { classBound } from "./classBound";
+  @classBound
+  export class Trace  {
     constructor(){
       console.log("hello!");
       console.log("tracing 1, 2, 3...");
@@ -7,4 +9,4 @@
     }
   }
 
-new Trace()
+new Trace();

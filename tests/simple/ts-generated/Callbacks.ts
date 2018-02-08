@@ -1,4 +1,6 @@
-import { bound } from "as3-to-ts/src/bound";
+import { bound } from "./bound";
+import { classBound } from "./classBound";
+@classBound
 export class Callbacks {
 
     public a:string = "a"
@@ -15,16 +17,16 @@ export class Callbacks {
     }
 
     @bound
-private callback():void {
+    private callback():void {
         console.log("(class callback) this is: " + this);
         if(this) { console.log("a is: " + this.a) }
         else { console.log("a is: unknown") }
     }
 
     @bound
-private executeCallback(callback:Function):void {
+    private executeCallback(callback:Function):void {
         callback();
     }
 }
 
-new Callbacks()
+new Callbacks();
